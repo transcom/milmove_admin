@@ -1,5 +1,7 @@
 # Auto Generated MilMove Admin App
 
+**NOTE:** THIS IS A DEMO ONLY AND HAS NOT YET BEEN CONFIRMED AS WORK WE WILL USE IN PRODUCTION
+
 This app automatically generates an Admin from the Database for the MilMove App.
 
 ## Prereqs
