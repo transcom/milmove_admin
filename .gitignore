@@ -4,6 +4,7 @@
 .vscode
 *.swp
 *.sublime-*
+*.py[c|o]
 
 # Makefile
 *.stamp
