@@ -14,7 +14,7 @@ class AccessCodes(models.Model):
     service_member = models.ForeignKey(
         "ServiceMembers",
         models.DO_NOTHING,
-        related_name="AccessCodes_service_member",
+        related_name="access_codes_service_member",
         blank=True,
         null=True,
     )
@@ -50,7 +50,7 @@ class AdminUsers(models.Model):
     user = models.ForeignKey(
         "Users",
         models.DO_NOTHING,
-        related_name="AdminUsers_user",
+        related_name="admin_users_user",
         blank=True,
         null=True,
     )
@@ -59,7 +59,7 @@ class AdminUsers(models.Model):
     organization = models.ForeignKey(
         "Organizations",
         models.DO_NOTHING,
-        related_name="AdminUsers_organization",
+        related_name="admin_users_organization",
         blank=True,
         null=True,
     )
@@ -68,6 +68,7 @@ class AdminUsers(models.Model):
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
     deactivated = models.BooleanField()
+    active = models.BooleanField()
 
     class Meta:
         managed = False
@@ -84,12 +85,12 @@ class AuthGroup(models.Model):
 
 class AuthGroupPermissions(models.Model):
     group = models.ForeignKey(
-        AuthGroup, models.DO_NOTHING, related_name="AuthGroupPermissions_group"
+        AuthGroup, models.DO_NOTHING, related_name="auth_group_permissions_group"
     )
     permission = models.ForeignKey(
         "AuthPermission",
         models.DO_NOTHING,
-        related_name="AuthGroupPermissions_permission",
+        related_name="auth_group_permissions_permission",
     )
 
     class Meta:
@@ -103,7 +104,7 @@ class AuthPermission(models.Model):
     content_type = models.ForeignKey(
         "DjangoContentType",
         models.DO_NOTHING,
-        related_name="AuthPermission_content_type",
+        related_name="auth_permission_content_type",
     )
     codename = models.CharField(max_length=100)
 
@@ -132,10 +133,10 @@ class AuthUser(models.Model):
 
 class AuthUserGroups(models.Model):
     user = models.ForeignKey(
-        AuthUser, models.DO_NOTHING, related_name="AuthUserGroups_user"
+        AuthUser, models.DO_NOTHING, related_name="auth_user_groups_user"
     )
     group = models.ForeignKey(
-        AuthGroup, models.DO_NOTHING, related_name="AuthUserGroups_group"
+        AuthGroup, models.DO_NOTHING, related_name="auth_user_groups_group"
     )
 
     class Meta:
@@ -146,12 +147,12 @@ class AuthUserGroups(models.Model):
 
 class AuthUserUserPermissions(models.Model):
     user = models.ForeignKey(
-        AuthUser, models.DO_NOTHING, related_name="AuthUserUserPermissions_user"
+        AuthUser, models.DO_NOTHING, related_name="auth_user_user_permissions_user"
     )
     permission = models.ForeignKey(
         AuthPermission,
         models.DO_NOTHING,
-        related_name="AuthUserUserPermissions_permission",
+        related_name="auth_user_user_permissions_permission",
     )
 
     class Meta:
@@ -202,12 +203,14 @@ class ClientCerts(models.Model):
 class DistanceCalculations(models.Model):
     id = models.UUIDField(primary_key=True)
     origin_address = models.ForeignKey(
-        Addresses, models.DO_NOTHING, related_name="DistanceCalculations_origin_address"
+        Addresses,
+        models.DO_NOTHING,
+        related_name="distance_calculations_origin_address",
     )
     destination_address = models.ForeignKey(
         Addresses,
         models.DO_NOTHING,
-        related_name="DistanceCalculations_destination_address",
+        related_name="distance_calculations_destination_address",
     )
     distance_miles = models.IntegerField()
     created_at = models.DateTimeField()
@@ -227,12 +230,12 @@ class DjangoAdminLog(models.Model):
     content_type = models.ForeignKey(
         "DjangoContentType",
         models.DO_NOTHING,
-        related_name="DjangoAdminLog_content_type",
+        related_name="django_admin_log_content_type",
         blank=True,
         null=True,
     )
     user = models.ForeignKey(
-        AuthUser, models.DO_NOTHING, related_name="DjangoAdminLog_user"
+        AuthUser, models.DO_NOTHING, related_name="django_admin_log_user"
     )
 
     class Meta:
@@ -275,7 +278,7 @@ class Documents(models.Model):
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
     service_member = models.ForeignKey(
-        "ServiceMembers", models.DO_NOTHING, related_name="Documents_service_member"
+        "ServiceMembers", models.DO_NOTHING, related_name="documents_service_member"
     )
     deleted_at = models.DateTimeField(blank=True, null=True)
 
@@ -290,6 +293,7 @@ class DpsUsers(models.Model):
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
     deactivated = models.BooleanField()
+    active = models.BooleanField()
 
     class Meta:
         managed = False
@@ -300,7 +304,9 @@ class DutyStationNames(models.Model):
     id = models.UUIDField(primary_key=True)
     name = models.TextField(unique=True)
     duty_station = models.ForeignKey(
-        "DutyStations", models.DO_NOTHING, related_name="DutyStationNames_duty_station"
+        "DutyStations",
+        models.DO_NOTHING,
+        related_name="duty_station_names_duty_station",
     )
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
@@ -315,14 +321,14 @@ class DutyStations(models.Model):
     name = models.CharField(unique=True, max_length=255)
     affiliation = models.CharField(max_length=255)
     address = models.ForeignKey(
-        Addresses, models.DO_NOTHING, related_name="DutyStations_address"
+        Addresses, models.DO_NOTHING, related_name="duty_stations_address"
     )
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
     transportation_office = models.ForeignKey(
         "TransportationOffices",
         models.DO_NOTHING,
-        related_name="DutyStations_transportation_office",
+        related_name="duty_stations_transportation_office",
         blank=True,
         null=True,
     )
@@ -351,7 +357,7 @@ class ElectronicOrdersRevisions(models.Model):
     electronic_order = models.ForeignKey(
         ElectronicOrders,
         models.DO_NOTHING,
-        related_name="ElectronicOrdersRevisions_electronic_order",
+        related_name="electronic_orders_revisions_electronic_order",
     )
     seq_num = models.IntegerField()
     given_name = models.CharField(max_length=255)
@@ -421,6 +427,30 @@ class FuelEiaDieselPrices(models.Model):
         db_table = "fuel_eia_diesel_prices"
 
 
+class GhcEntitlements(models.Model):
+    id = models.UUIDField(primary_key=True)
+    dependents_authorized = models.BooleanField(blank=True, null=True)
+    total_dependents = models.IntegerField(blank=True, null=True)
+    non_temporary_storage = models.BooleanField(blank=True, null=True)
+    privately_owned_vehicle = models.BooleanField(blank=True, null=True)
+    pro_gear_weight = models.IntegerField(blank=True, null=True)
+    pro_gear_weight_spouse = models.IntegerField(blank=True, null=True)
+    storage_in_transit = models.IntegerField(blank=True, null=True)
+    created_at = models.DateField(blank=True, null=True)
+    updated_at = models.DateField(blank=True, null=True)
+    move_task_order = models.ForeignKey(
+        "MoveTaskOrders",
+        models.DO_NOTHING,
+        related_name="ghc_entitlements_move_task_order",
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        managed = False
+        db_table = "ghc_entitlements"
+
+
 class InvoiceNumberTrackers(models.Model):
     standard_carrier_alpha_code = models.TextField(primary_key=True)
     year = models.IntegerField()
@@ -440,12 +470,12 @@ class Invoices(models.Model):
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
     approver = models.ForeignKey(
-        "OfficeUsers", models.DO_NOTHING, related_name="Invoices_approver"
+        "OfficeUsers", models.DO_NOTHING, related_name="invoices_approver"
     )
     upload = models.ForeignKey(
         "Uploads",
         models.DO_NOTHING,
-        related_name="Invoices_upload",
+        related_name="invoices_upload",
         blank=True,
         null=True,
     )
@@ -458,10 +488,10 @@ class Invoices(models.Model):
 class MoveDocuments(models.Model):
     id = models.UUIDField(primary_key=True)
     move = models.ForeignKey(
-        "Moves", models.DO_NOTHING, related_name="MoveDocuments_move"
+        "Moves", models.DO_NOTHING, related_name="move_documents_move"
     )
     document = models.ForeignKey(
-        Documents, models.DO_NOTHING, related_name="MoveDocuments_document"
+        Documents, models.DO_NOTHING, related_name="move_documents_document"
     )
     move_document_type = models.CharField(max_length=255)
     status = models.CharField(max_length=255)
@@ -472,7 +502,7 @@ class MoveDocuments(models.Model):
     personally_procured_move = models.ForeignKey(
         "PersonallyProcuredMoves",
         models.DO_NOTHING,
-        related_name="MoveDocuments_personally_procured_move",
+        related_name="move_documents_personally_procured_move",
         blank=True,
         null=True,
     )
@@ -484,12 +514,63 @@ class MoveDocuments(models.Model):
         unique_together = (("move", "document"),)
 
 
+class MoveTaskOrders(models.Model):
+    id = models.UUIDField(primary_key=True)
+    move_id = models.UUIDField(blank=True, null=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    customer = models.ForeignKey(
+        "ServiceMembers",
+        models.DO_NOTHING,
+        related_name="move_task_orders_customer",
+        blank=True,
+        null=True,
+    )
+    origin_duty_station = models.ForeignKey(
+        DutyStations,
+        models.DO_NOTHING,
+        related_name="move_task_orders_origin_duty_station",
+        blank=True,
+        null=True,
+    )
+    destination_duty_station = models.ForeignKey(
+        DutyStations,
+        models.DO_NOTHING,
+        related_name="move_task_orders_destination_duty_station",
+        blank=True,
+        null=True,
+    )
+    pickup_address = models.ForeignKey(
+        Addresses,
+        models.DO_NOTHING,
+        related_name="move_task_orders_pickup_address",
+        blank=True,
+        null=True,
+    )
+    destination_address = models.ForeignKey(
+        Addresses,
+        models.DO_NOTHING,
+        related_name="move_task_orders_destination_address",
+        blank=True,
+        null=True,
+    )
+    actual_weight = models.IntegerField(blank=True, null=True)
+    requested_pickup_date = models.DateField(blank=True, null=True)
+    customer_remarks = models.TextField(blank=True, null=True)
+    type = models.TextField(blank=True, null=True)  # This field type is a guess.
+    status = models.TextField(blank=True, null=True)  # This field type is a guess.
+
+    class Meta:
+        managed = False
+        db_table = "move_task_orders"
+
+
 class Moves(models.Model):
     id = models.UUIDField(primary_key=True)
     selected_move_type = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
-    orders = models.ForeignKey("Orders", models.DO_NOTHING, related_name="Moves_orders")
+    orders = models.ForeignKey("Orders", models.DO_NOTHING, related_name="moves_orders")
     status = models.CharField(max_length=255)
     locator = models.CharField(unique=True, max_length=6, blank=True, null=True)
     cancel_reason = models.CharField(max_length=255, blank=True, null=True)
@@ -505,7 +586,7 @@ class MovingExpenseDocuments(models.Model):
     move_document = models.ForeignKey(
         MoveDocuments,
         models.DO_NOTHING,
-        related_name="MovingExpenseDocuments_move_document",
+        related_name="moving_expense_documents_move_document",
     )
     moving_expense_type = models.CharField(max_length=255)
     created_at = models.DateTimeField()
@@ -527,7 +608,7 @@ class Notifications(models.Model):
     service_member = models.ForeignKey(
         "ServiceMembers",
         models.DO_NOTHING,
-        related_name="Notifications_service_member",
+        related_name="notifications_service_member",
         blank=True,
         null=True,
     )
@@ -545,7 +626,7 @@ class OfficeEmails(models.Model):
     transportation_office = models.ForeignKey(
         "TransportationOffices",
         models.DO_NOTHING,
-        related_name="OfficeEmails_transportation_office",
+        related_name="office_emails_transportation_office",
     )
     email = models.TextField()
     label = models.TextField(blank=True, null=True)
@@ -562,7 +643,7 @@ class OfficePhoneLines(models.Model):
     transportation_office = models.ForeignKey(
         "TransportationOffices",
         models.DO_NOTHING,
-        related_name="OfficePhoneLines_transportation_office",
+        related_name="office_phone_lines_transportation_office",
     )
     number = models.TextField()
     label = models.TextField(blank=True, null=True)
@@ -581,7 +662,7 @@ class OfficeUsers(models.Model):
     user = models.ForeignKey(
         "Users",
         models.DO_NOTHING,
-        related_name="OfficeUsers_user",
+        related_name="office_users_user",
         blank=True,
         null=True,
     )
@@ -593,11 +674,12 @@ class OfficeUsers(models.Model):
     transportation_office = models.ForeignKey(
         "TransportationOffices",
         models.DO_NOTHING,
-        related_name="OfficeUsers_transportation_office",
+        related_name="office_users_transportation_office",
     )
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
     deactivated = models.BooleanField()
+    active = models.BooleanField()
 
     class Meta:
         managed = False
@@ -607,19 +689,19 @@ class OfficeUsers(models.Model):
 class Orders(models.Model):
     id = models.UUIDField(primary_key=True)
     service_member = models.ForeignKey(
-        "ServiceMembers", models.DO_NOTHING, related_name="Orders_service_member"
+        "ServiceMembers", models.DO_NOTHING, related_name="orders_service_member"
     )
     issue_date = models.DateField()
     report_by_date = models.DateField()
     orders_type = models.CharField(max_length=255)
     has_dependents = models.BooleanField()
     new_duty_station = models.ForeignKey(
-        DutyStations, models.DO_NOTHING, related_name="Orders_new_duty_station"
+        DutyStations, models.DO_NOTHING, related_name="orders_new_duty_station"
     )
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
     uploaded_orders = models.ForeignKey(
-        Documents, models.DO_NOTHING, related_name="Orders_uploaded_orders"
+        Documents, models.DO_NOTHING, related_name="orders_uploaded_orders"
     )
     orders_number = models.CharField(max_length=255, blank=True, null=True)
     orders_type_detail = models.CharField(max_length=255, blank=True, null=True)
@@ -650,7 +732,7 @@ class Organizations(models.Model):
 class PersonallyProcuredMoves(models.Model):
     id = models.UUIDField(primary_key=True)
     move = models.ForeignKey(
-        Moves, models.DO_NOTHING, related_name="PersonallyProcuredMoves_move"
+        Moves, models.DO_NOTHING, related_name="personally_procured_moves_move"
     )
     size = models.CharField(max_length=255, blank=True, null=True)
     weight_estimate = models.IntegerField(blank=True, null=True)
@@ -678,7 +760,7 @@ class PersonallyProcuredMoves(models.Model):
     advance_worksheet = models.ForeignKey(
         Documents,
         models.DO_NOTHING,
-        related_name="PersonallyProcuredMoves_advance_worksheet",
+        related_name="personally_procured_moves_advance_worksheet",
         blank=True,
         null=True,
     )
@@ -698,7 +780,7 @@ class PersonallyProcuredMoves(models.Model):
 class ReContractYears(models.Model):
     id = models.UUIDField(primary_key=True)
     contract = models.ForeignKey(
-        "ReContracts", models.DO_NOTHING, related_name="ReContractYears_contract"
+        "ReContracts", models.DO_NOTHING, related_name="re_contract_years_contract"
     )
     name = models.CharField(max_length=80)
     start_date = models.DateField()
@@ -730,12 +812,12 @@ class ReDomesticAccessorialPrices(models.Model):
     contract = models.ForeignKey(
         ReContracts,
         models.DO_NOTHING,
-        related_name="ReDomesticAccessorialPrices_contract",
+        related_name="re_domestic_accessorial_prices_contract",
     )
     service = models.ForeignKey(
         "ReServices",
         models.DO_NOTHING,
-        related_name="ReDomesticAccessorialPrices_service",
+        related_name="re_domestic_accessorial_prices_service",
     )
     services_schedule = models.IntegerField()
     per_unit_cents = models.IntegerField()
@@ -751,7 +833,9 @@ class ReDomesticAccessorialPrices(models.Model):
 class ReDomesticLinehaulPrices(models.Model):
     id = models.UUIDField(primary_key=True)
     contract = models.ForeignKey(
-        ReContracts, models.DO_NOTHING, related_name="ReDomesticLinehaulPrices_contract"
+        ReContracts,
+        models.DO_NOTHING,
+        related_name="re_domestic_linehaul_prices_contract",
     )
     weight_lower = models.IntegerField()
     weight_upper = models.IntegerField()
@@ -761,7 +845,7 @@ class ReDomesticLinehaulPrices(models.Model):
     domestic_service_area = models.ForeignKey(
         "ReDomesticServiceAreas",
         models.DO_NOTHING,
-        related_name="ReDomesticLinehaulPrices_domestic_service_area",
+        related_name="re_domestic_linehaul_prices_domestic_service_area",
     )
     price_millicents = models.IntegerField()
     created_at = models.DateTimeField()
@@ -786,10 +870,10 @@ class ReDomesticLinehaulPrices(models.Model):
 class ReDomesticOtherPrices(models.Model):
     id = models.UUIDField(primary_key=True)
     contract = models.ForeignKey(
-        ReContracts, models.DO_NOTHING, related_name="ReDomesticOtherPrices_contract"
+        ReContracts, models.DO_NOTHING, related_name="re_domestic_other_prices_contract"
     )
     service = models.ForeignKey(
-        "ReServices", models.DO_NOTHING, related_name="ReDomesticOtherPrices_service"
+        "ReServices", models.DO_NOTHING, related_name="re_domestic_other_prices_service"
     )
     is_peak_period = models.BooleanField()
     schedule = models.IntegerField()
@@ -808,18 +892,18 @@ class ReDomesticServiceAreaPrices(models.Model):
     contract = models.ForeignKey(
         ReContracts,
         models.DO_NOTHING,
-        related_name="ReDomesticServiceAreaPrices_contract",
+        related_name="re_domestic_service_area_prices_contract",
     )
     service = models.ForeignKey(
         "ReServices",
         models.DO_NOTHING,
-        related_name="ReDomesticServiceAreaPrices_service",
+        related_name="re_domestic_service_area_prices_service",
     )
     is_peak_period = models.BooleanField()
     domestic_service_area = models.ForeignKey(
         "ReDomesticServiceAreas",
         models.DO_NOTHING,
-        related_name="ReDomesticServiceAreaPrices_domestic_service_area",
+        related_name="re_domestic_service_area_prices_domestic_service_area",
     )
     price_cents = models.IntegerField()
     created_at = models.DateTimeField()
@@ -851,10 +935,14 @@ class ReDomesticServiceAreas(models.Model):
 class ReIntlAccessorialPrices(models.Model):
     id = models.UUIDField(primary_key=True)
     contract = models.ForeignKey(
-        ReContracts, models.DO_NOTHING, related_name="ReIntlAccessorialPrices_contract"
+        ReContracts,
+        models.DO_NOTHING,
+        related_name="re_intl_accessorial_prices_contract",
     )
     service = models.ForeignKey(
-        "ReServices", models.DO_NOTHING, related_name="ReIntlAccessorialPrices_service"
+        "ReServices",
+        models.DO_NOTHING,
+        related_name="re_intl_accessorial_prices_service",
     )
     market = models.CharField(max_length=1)
     per_unit_cents = models.IntegerField()
@@ -870,14 +958,14 @@ class ReIntlAccessorialPrices(models.Model):
 class ReIntlOtherPrices(models.Model):
     id = models.UUIDField(primary_key=True)
     contract = models.ForeignKey(
-        ReContracts, models.DO_NOTHING, related_name="ReIntlOtherPrices_contract"
+        ReContracts, models.DO_NOTHING, related_name="re_intl_other_prices_contract"
     )
     service = models.ForeignKey(
-        "ReServices", models.DO_NOTHING, related_name="ReIntlOtherPrices_service"
+        "ReServices", models.DO_NOTHING, related_name="re_intl_other_prices_service"
     )
     is_peak_period = models.BooleanField()
     rate_area = models.ForeignKey(
-        "ReRateAreas", models.DO_NOTHING, related_name="ReIntlOtherPrices_rate_area"
+        "ReRateAreas", models.DO_NOTHING, related_name="re_intl_other_prices_rate_area"
     )
     per_unit_cents = models.IntegerField()
     created_at = models.DateTimeField()
@@ -892,19 +980,19 @@ class ReIntlOtherPrices(models.Model):
 class ReIntlPrices(models.Model):
     id = models.UUIDField(primary_key=True)
     contract = models.ForeignKey(
-        ReContracts, models.DO_NOTHING, related_name="ReIntlPrices_contract"
+        ReContracts, models.DO_NOTHING, related_name="re_intl_prices_contract"
     )
     service = models.ForeignKey(
-        "ReServices", models.DO_NOTHING, related_name="ReIntlPrices_service"
+        "ReServices", models.DO_NOTHING, related_name="re_intl_prices_service"
     )
     is_peak_period = models.BooleanField()
     origin_rate_area = models.ForeignKey(
-        "ReRateAreas", models.DO_NOTHING, related_name="ReIntlPrices_origin_rate_area"
+        "ReRateAreas", models.DO_NOTHING, related_name="re_intl_prices_origin_rate_area"
     )
     destination_rate_area = models.ForeignKey(
         "ReRateAreas",
         models.DO_NOTHING,
-        related_name="ReIntlPrices_destination_rate_area",
+        related_name="re_intl_prices_destination_rate_area",
     )
     per_unit_cents = models.IntegerField()
     created_at = models.DateTimeField()
@@ -952,12 +1040,12 @@ class ReServices(models.Model):
 class ReShipmentTypePrices(models.Model):
     id = models.UUIDField(primary_key=True)
     contract = models.ForeignKey(
-        ReContracts, models.DO_NOTHING, related_name="ReShipmentTypePrices_contract"
+        ReContracts, models.DO_NOTHING, related_name="re_shipment_type_prices_contract"
     )
     shipment_type = models.ForeignKey(
         "ReShipmentTypes",
         models.DO_NOTHING,
-        related_name="ReShipmentTypePrices_shipment_type",
+        related_name="re_shipment_type_prices_shipment_type",
     )
     market = models.CharField(max_length=1)
     factor_hundredths = models.IntegerField()
@@ -985,10 +1073,12 @@ class ReShipmentTypes(models.Model):
 class ReTaskOrderFees(models.Model):
     id = models.UUIDField(primary_key=True)
     contract_year = models.ForeignKey(
-        ReContractYears, models.DO_NOTHING, related_name="ReTaskOrderFees_contract_year"
+        ReContractYears,
+        models.DO_NOTHING,
+        related_name="re_task_order_fees_contract_year",
     )
     service = models.ForeignKey(
-        ReServices, models.DO_NOTHING, related_name="ReTaskOrderFees_service"
+        ReServices, models.DO_NOTHING, related_name="re_task_order_fees_service"
     )
     price_cents = models.IntegerField()
     created_at = models.DateTimeField()
@@ -1006,7 +1096,7 @@ class ReZip3S(models.Model):
     domestic_service_area = models.ForeignKey(
         ReDomesticServiceAreas,
         models.DO_NOTHING,
-        related_name="ReZip3S_domestic_service_area",
+        related_name="re_zip3s_domestic_service_area",
     )
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
@@ -1038,10 +1128,27 @@ class SchemaMigration(models.Model):
         db_table = "schema_migration"
 
 
+class ServiceItems(models.Model):
+    id = models.UUIDField(primary_key=True)
+    move_task_order = models.ForeignKey(
+        MoveTaskOrders,
+        models.DO_NOTHING,
+        related_name="service_items_move_task_order",
+        blank=True,
+        null=True,
+    )
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "service_items"
+
+
 class ServiceMembers(models.Model):
     id = models.UUIDField(primary_key=True)
     user = models.OneToOneField(
-        "Users", models.DO_NOTHING, related_name="ServiceMembers_user"
+        "Users", models.DO_NOTHING, related_name="service_members_user"
     )
     edipi = models.TextField(blank=True, null=True)
     affiliation = models.TextField(blank=True, null=True)
@@ -1058,14 +1165,14 @@ class ServiceMembers(models.Model):
     residential_address = models.ForeignKey(
         Addresses,
         models.DO_NOTHING,
-        related_name="ServiceMembers_residential_address",
+        related_name="service_members_residential_address",
         blank=True,
         null=True,
     )
     backup_mailing_address = models.ForeignKey(
         Addresses,
         models.DO_NOTHING,
-        related_name="ServiceMembers_backup_mailing_address",
+        related_name="service_members_backup_mailing_address",
         blank=True,
         null=True,
     )
@@ -1074,14 +1181,14 @@ class ServiceMembers(models.Model):
     social_security_number = models.ForeignKey(
         "SocialSecurityNumbers",
         models.DO_NOTHING,
-        related_name="ServiceMembers_social_security_number",
+        related_name="service_members_social_security_number",
         blank=True,
         null=True,
     )
     duty_station = models.ForeignKey(
         DutyStations,
         models.DO_NOTHING,
-        related_name="ServiceMembers_duty_station",
+        related_name="service_members_duty_station",
         blank=True,
         null=True,
     )
@@ -1095,10 +1202,10 @@ class ServiceMembers(models.Model):
 class SignedCertifications(models.Model):
     id = models.UUIDField(primary_key=True)
     submitting_user = models.ForeignKey(
-        "Users", models.DO_NOTHING, related_name="SignedCertifications_submitting_user"
+        "Users", models.DO_NOTHING, related_name="signed_certifications_submitting_user"
     )
     move = models.ForeignKey(
-        Moves, models.DO_NOTHING, related_name="SignedCertifications_move"
+        Moves, models.DO_NOTHING, related_name="signed_certifications_move"
     )
     certification_text = models.TextField()
     signature = models.TextField()
@@ -1108,7 +1215,7 @@ class SignedCertifications(models.Model):
     personally_procured_move = models.ForeignKey(
         PersonallyProcuredMoves,
         models.DO_NOTHING,
-        related_name="SignedCertifications_personally_procured_move",
+        related_name="signed_certifications_personally_procured_move",
         blank=True,
         null=True,
     )
@@ -1297,13 +1404,13 @@ class TransportationOffices(models.Model):
     shipping_office = models.ForeignKey(
         "self",
         models.DO_NOTHING,
-        related_name="TransportationOffices_shipping_office",
+        related_name="transportation_offices_shipping_office",
         blank=True,
         null=True,
     )
     name = models.TextField()
     address = models.ForeignKey(
-        Addresses, models.DO_NOTHING, related_name="TransportationOffices_address"
+        Addresses, models.DO_NOTHING, related_name="transportation_offices_address"
     )
     latitude = models.FloatField()
     longitude = models.FloatField()
@@ -1326,7 +1433,7 @@ class TransportationServiceProviderPerformances(models.Model):
     traffic_distribution_list = models.ForeignKey(
         TrafficDistributionLists,
         models.DO_NOTHING,
-        related_name="TransportationServiceProviderPerformances_traffic_distribution_list",
+        related_name="transportation_service_provider_performances_traffic_distribution_list",
     )
     quality_band = models.IntegerField(blank=True, null=True)
     offer_count = models.IntegerField()
@@ -1334,7 +1441,7 @@ class TransportationServiceProviderPerformances(models.Model):
     transportation_service_provider = models.ForeignKey(
         "TransportationServiceProviders",
         models.DO_NOTHING,
-        related_name="TransportationServiceProviderPerformances_transportation_service_provider",
+        related_name="transportation_service_provider_performances_transportation_service_provider",
     )
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
@@ -1373,12 +1480,12 @@ class Uploads(models.Model):
     document = models.ForeignKey(
         Documents,
         models.DO_NOTHING,
-        related_name="Uploads_document",
+        related_name="uploads_document",
         blank=True,
         null=True,
     )
     uploader = models.ForeignKey(
-        "Users", models.DO_NOTHING, related_name="Uploads_uploader"
+        "Users", models.DO_NOTHING, related_name="uploads_uploader"
     )
     filename = models.TextField()
     bytes = models.BigIntegerField()
@@ -1401,6 +1508,7 @@ class Users(models.Model):
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
     deactivated = models.BooleanField()
+    active = models.BooleanField()
 
     class Meta:
         managed = False
@@ -1414,7 +1522,7 @@ class WeightTicketSetDocuments(models.Model):
     move_document = models.ForeignKey(
         MoveDocuments,
         models.DO_NOTHING,
-        related_name="WeightTicketSetDocuments_move_document",
+        related_name="weight_ticket_set_documents_move_document",
         blank=True,
         null=True,
     )
