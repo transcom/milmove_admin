@@ -1,0 +1,9 @@
+#! /usr/bin/env bash
+
+
+docker build . --tag=milmove_admin:latest
+
+docker network create dbnet
+docker network connect dbnet mysql
+
+docker-compose up
