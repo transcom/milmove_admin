@@ -200,6 +200,19 @@ class ClientCerts(models.Model):
         db_table = "client_certs"
 
 
+class Contractor(models.Model):
+    id = models.UUIDField(primary_key=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    name = models.CharField(max_length=80)
+    contract_number = models.CharField(unique=True, max_length=80)
+    type = models.CharField(max_length=80)
+
+    class Meta:
+        managed = False
+        db_table = "contractor"
+
+
 class DistanceCalculations(models.Model):
     id = models.UUIDField(primary_key=True)
     origin_address = models.ForeignKey(
@@ -554,11 +567,20 @@ class MoveTaskOrders(models.Model):
         blank=True,
         null=True,
     )
-    actual_weight = models.IntegerField(blank=True, null=True)
+    prime_actual_weight = models.IntegerField(blank=True, null=True)
     requested_pickup_date = models.DateField(blank=True, null=True)
     customer_remarks = models.TextField(blank=True, null=True)
     type = models.TextField(blank=True, null=True)  # This field type is a guess.
     status = models.TextField(blank=True, null=True)  # This field type is a guess.
+    prime_estimated_weight_recorded_date = models.DateTimeField(blank=True, null=True)
+    prime_estimated_weight = models.IntegerField(blank=True, null=True)
+    reference_id = models.CharField(unique=True, max_length=9, blank=True, null=True)
+    submitted_counseling_info_date = models.DateField(blank=True, null=True)
+    available_to_prime_date = models.DateField(blank=True, null=True)
+    scheduled_move_date = models.DateField(blank=True, null=True)
+    secondary_pickup_address_id = models.UUIDField(blank=True, null=True)
+    secondary_delivery_address_id = models.UUIDField(blank=True, null=True)
+    ppm_is_included = models.BooleanField(blank=True, null=True)
 
     class Meta:
         managed = False
