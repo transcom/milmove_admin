@@ -44,14 +44,13 @@ python manage.py createsuperuser
 Then you will want to generate the latest version of the models:
 
 ```sh
-python manage.py inspectdb > new_models.py
-mv new_models.py milmoveapp/models.py
+make generate_models
 ```
 
 Then you can run the server:
 
 ```sh
-python manage.py runserver
+make run_server
 ```
 
 Finally, open the app at `http://localhost:8000/admin`.
