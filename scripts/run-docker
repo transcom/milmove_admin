@@ -2,9 +2,15 @@
 
 set -eu -o pipefail
 
+NETWORK=dbnet
 docker build . --tag=milmove_admin:latest
 
-docker network create dbnet
-docker network connect dbnet mysql
+# Check if the network has already been set up before creating one
+if docker network inspect "${NETWORK}" > /dev/null ; then
+  echo "Network ${NETWORK} already created"
+else
+  docker network create "${NETWORK}"
+  docker network connect "${NETWORK}" milmove-db-dev
+fi
 
 docker-compose up
