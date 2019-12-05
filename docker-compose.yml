@@ -1,0 +1,35 @@
+version: "3.3"
+
+services:
+  milmove_admin:
+    container_name: milmove_admin
+    build:
+      context: .
+      dockerfile: Dockerfile
+      cache_from:
+        - python:3.7-alpine
+    image: milmove_admin:latest
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_ALLOWED_HOSTS
+      - DJANGO_DEBUG
+      - DJANGO_SECRET_KEY
+      - DB_ENGINE
+      - DB_PASSWORD
+      - PGPASSWORD
+      - DB_USER
+      - DB_HOST=db
+      - DB_PORT
+      - DB_NAME
+    external_links:
+      - milmove-db-dev:db
+
+networks:
+  default:
+    external:
+      name: dbnet

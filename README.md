@@ -6,12 +6,13 @@ This app automatically generates an Admin from the Database for the MilMove App.
 
 ## Prereqs
 
-You will need `python3` installed to work with this project. In addition you will need `virtualenv`.
+You will need to install prereqs. Run the following script and follow any instructions:
 
 ```sh
-brew install python
-pip3 install virtualenv
+./scripts/prereqs
 ```
+
+After installation ensure you run `direnv allow` to pick up environment variables for this project.
 
 ## Usage
 
@@ -21,40 +22,39 @@ Before getting started go to the MilMove App and migrate the DB:
 make db_dev_reset db_dev_migrate
 ```
 
-To use you will need to install the environment:
-
-```sh
-virtualenv -p python3 .venv
-source .venv/bin/activate
-pip install -r requirement.txt
-```
-
 Next you need to install the tables needed by Django:
 
 ```sh
-python manage.py migrate
+make migrate
 ```
 
 Next you need a superuser to log in:
 
 ```sh
-python manage.py createsuperuser
+make createsuperuser
 ```
 
 Then you will want to generate the latest version of the models:
 
 ```sh
-python manage.py inspectdb > new_models.py
-mv new_models.py milmoveapp/models.py
+make generate_models
 ```
 
 Then you can run the server:
 
 ```sh
-python manage.py runserver
+make runserver
 ```
 
-Finally, open the app at `http://localhost:8000/admin`.
+Finally, open the app at `http://localhost:8000/admin` and log in with the superuser you created.
+
+## Docker Usage
+
+To run this site inside a docker container you will do the following steps.
+
+```sh
+make runserver_docker
+```
 
 ## Custom `inspectdb` command
 
