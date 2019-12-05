@@ -6,12 +6,13 @@ This app automatically generates an Admin from the Database for the MilMove App.
 
 ## Prereqs
 
-You will need `python3` installed to work with this project. In addition you will need `virtualenv`.
+You will need to install prereqs. Run the following script and follow any instructions:
 
 ```sh
-brew install python
-pip3 install virtualenv
+./scripts/prereqs
 ```
+
+After installation ensure you run `direnv allow` to pick up environment variables for this project.
 
 ## Usage
 
