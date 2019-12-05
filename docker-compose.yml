@@ -6,7 +6,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: milmove_admin
+      cache_from:
+        - python:3.7-alpine
+    image: milmove_admin:latest
     stdin_open: true
     tty: true
     volumes:

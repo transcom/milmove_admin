@@ -21,6 +21,7 @@ RUN pip install -r requirements.txt
 COPY . /code/
 
 # Server
+# TODO: For deployment to ECS this needs to be Nginx/Gunicorn and not runserver
 EXPOSE 8000
 STOPSIGNAL SIGINT
 ENTRYPOINT ["python", "manage.py"]

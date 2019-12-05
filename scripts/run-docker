@@ -1,9 +1,15 @@
 #! /usr/bin/env bash
 
+#
+# Run the django admin inside docker
+#
+# This script creates a special docker network to connect the milmove db to the django admin container.
+# It then runs the container using docker-compose.
+#
+
 set -eu -o pipefail
 
 NETWORK=dbnet
-docker build . --tag=milmove_admin:latest
 
 # Check if the network has already been set up before creating one
 if docker network inspect "${NETWORK}" > /dev/null ; then

@@ -57,6 +57,14 @@ pretty: venv ## Prettify the code
 lint: venv ## Run linting tests
 	$(WITH_VENV) flake8 .
 
+.PHONY: migrate
+migrate: venv
+	$(WITH_VENV) python manage.py migrate
+
+.PHONY: createsuperuser
+createsuperuser: venv
+	$(WITH_VENV) python manage.py createsuperuser)
+
 .PHONY: generate_models
 generate_models: venv
 	$(WITH_VENV) python manage.py inspectdb > new_models.py
@@ -64,8 +72,12 @@ generate_models: venv
 	$(WITH_VENV) black milmoveapp/
 	pre-commit run --all-files fix-encoding-pragma
 
-.PHONY: run_server
-run_server: venv
+.PHONY: runserver
+runserver: venv
 	$(WITH_VENV) python manage.py runserver
+
+.PHONY: runserver_docker
+runserver_docker:
+	./scripts/run-docker
 
 default: help
