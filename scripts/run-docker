@@ -7,7 +7,7 @@
 # It then runs the container using docker-compose.
 #
 
-set -eu -o pipefail
+set -u -o pipefail
 
 NETWORK=dbnet
 
@@ -19,5 +19,5 @@ else
   docker network connect "${NETWORK}" milmove-db-dev
 fi
 
-docker-compose up
+docker-compose up --build
 docker-compose down

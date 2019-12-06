@@ -14,9 +14,11 @@ services:
     volumes:
       - .:/code
     ports:
-      - "8000:8000"
+      - "8000:80"
     environment:
-      - DJANGO_ALLOWED_HOSTS
+      - DEBUG=0
+      - TEMPLATE_DEBUG=0
+      - DJANGO_ALLOWED_HOSTS="*"
       - DJANGO_DEBUG
       - DJANGO_SECRET_KEY
       - DB_ENGINE
