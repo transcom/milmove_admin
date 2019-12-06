@@ -12,3 +12,6 @@
 # Virtualenv
 .venv
 __pycache__
+
+# Static files
+static-root/
