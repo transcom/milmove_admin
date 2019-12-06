@@ -16,9 +16,7 @@ services:
     ports:
       - "8000:80"
     environment:
-      - DEBUG=0
-      - TEMPLATE_DEBUG=0
-      - DJANGO_ALLOWED_HOSTS="*"
+      - DJANGO_ALLOWED_HOSTS
       - DJANGO_DEBUG
       - DJANGO_SECRET_KEY
       - DB_ENGINE

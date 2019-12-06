@@ -10,5 +10,20 @@
 *.stamp
 
 # Virtualenv
-.venv
+.venv/
 __pycache__
+
+# Not required for deployment
+.git/
+.dockerignore
+.editorconfig
+.envrc
+.flake8
+.gitignore
+.markdownlintrc
+.pre-commit-config.yaml
+docker-compose.yml
+Dockerfile
+LICENCE.md
+Makefile
+README.md

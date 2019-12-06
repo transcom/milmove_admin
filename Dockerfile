@@ -14,17 +14,14 @@ RUN apk update \
 
 # Set up project with dependencies
 WORKDIR /srv
-RUN mkdir media static logs
+RUN mkdir -p /srv/static /srv/logs
 COPY . /srv/
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Server
+# Setup NGINX
+RUN mkdir -p /run/nginx
+COPY ./deploy/django-nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 8000
-STOPSIGNAL SIGINT
 
-COPY ./deploy/entrypoint.sh /entrypoint.sh
-COPY ./deploy/django-nginx.conf /etc/nginx/sites-available/
-RUN ln -s /etc/nginx/sites-available/django-nginx.conf /etc/nginx/sites-enabled
-RUN mkdir /run/nginx
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/srv/deploy/entrypoint.sh"]
