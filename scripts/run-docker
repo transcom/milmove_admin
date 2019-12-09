@@ -10,8 +10,7 @@
 set -u -o pipefail
 
 # Generate new static files
-python manage.py collectstatic --noinput --clear > /dev/null
-python manage.py collectstatic --noinput
+python manage.py collectstatic --noinput --clear
 
 NETWORK=dbnet
 

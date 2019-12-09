@@ -8,18 +8,20 @@ WITH_VENV=. $(VENV_ACTIVATE);
 help:  ## Print the help documentation
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+.PHONY: prereqs
+prereqs: ## Ensure prereqs are installed
+	./scripts/prereqs
+
 $(VENV_ACTIVATE): requirements.txt
-	brew list libev || brew install libev
-	which virtualenv || pip install virtualenv
-	test -f $@ || virtualenv --python=python3 $(VENV_DIR)
+	test -f $@ || virtualenv --python=python3.8 $(VENV_DIR)
 	$(WITH_VENV) pip install -r requirements.txt
 	touch $@
 
 .PHONY: venv
-venv: $(VENV_ACTIVATE)
+venv: $(VENV_ACTIVATE) ## Install virtualenv and activate it
 
 .PHONY: setup
-setup: venv ensure_pre_commit
+setup: prereqs venv ensure_pre_commit ## Run all setup actions
 
 # This target ensures that the pre-commit hook is installed and kept up to date
 # if pre-commit updates.

@@ -15,7 +15,7 @@ services:
     expose:
       - 8000
     volumes:
-      - static_volume:/home/app/web/static
+      - static_volume:/home/app/web/staticfiles
     environment:
       - DJANGO_ALLOWED_HOSTS
       - DJANGO_DEBUG
@@ -39,7 +39,7 @@ services:
     ports:
       - "8001:80"
     volumes:
-      - static_volume:/home/app/web/static
+      - static_volume:/home/app/web/staticfiles
     depends_on:
       - web
 

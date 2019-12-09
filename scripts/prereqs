@@ -15,7 +15,7 @@ function has() {
     fi
 }
 
-has python "brew install python"
+has python3.8 "brew install python3"
 has virtualenv "pip3 install virtualenv"
 has pre-commit "brew install pre-commit"
 has shellcheck "brew install shellcheck"

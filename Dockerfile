@@ -38,7 +38,7 @@ RUN addgroup -S app && adduser -S app -G app
 # create the appropriate directories
 ENV HOME=/home/app
 ENV APP_HOME=/home/app/web
-RUN mkdir -p $APP_HOME $APP_HOME/static
+RUN mkdir -p $APP_HOME $APP_HOME/staticfiles
 WORKDIR $APP_HOME
 
 # install dependencies
