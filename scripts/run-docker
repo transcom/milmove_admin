@@ -28,6 +28,13 @@ if docker network inspect "${NETWORK}" > /dev/null ; then
   echo "Network ${NETWORK} already created"
 else
   docker network create "${NETWORK}"
+fi
+
+CONTAINER=milmove-db-dev
+CONNECTED=$(docker network inspect dbnet | jq -r ".[0].Containers | map(.Name)[0]")
+if [[ "${CONNECTED}" == "${CONTAINER}" ]]; then
+  echo "Container ${CONTAINER} already connected to network ${NETWORK}"
+else
   docker network connect "${NETWORK}" milmove-db-dev
 fi
 
