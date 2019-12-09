@@ -12,9 +12,10 @@ help:  ## Print the help documentation
 prereqs: ## Ensure prereqs are installed
 	./scripts/prereqs
 
-$(VENV_ACTIVATE): requirements.txt
+$(VENV_ACTIVATE): requirements.txt requirements-dev.txt
 	test -f $@ || virtualenv --python=python3.8 $(VENV_DIR)
 	$(WITH_VENV) pip install -r requirements.txt
+	$(WITH_VENV) pip install -r requirements-dev.txt
 	touch $@
 
 .PHONY: venv
@@ -65,14 +66,14 @@ migrate: venv
 
 .PHONY: createsuperuser
 createsuperuser: venv
-	$(WITH_VENV) python manage.py createsuperuser)
+	$(WITH_VENV) python manage.py createsuperuser
 
 .PHONY: generate_models
 generate_models: venv
 	$(WITH_VENV) python manage.py inspectdb > new_models.py
 	mv new_models.py milmoveapp/models.py
 	$(WITH_VENV) black milmoveapp/
-	pre-commit run --all-files fix-encoding-pragma
+	pre-commit run --all-files fix-encoding-pragma || true
 
 .PHONY: runserver
 runserver: venv
