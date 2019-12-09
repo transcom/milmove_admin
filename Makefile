@@ -72,8 +72,8 @@ createsuperuser: venv
 .PHONY: generate_models
 generate_models: venv
 	$(WITH_VENV) python manage.py inspectdb > new_models.py
-	mv new_models.py milmoveapp/models.py
-	$(WITH_VENV) black milmoveapp/
+	mv new_models.py milmove_app/models.py
+	pre-commit run --all-files black || true
 	pre-commit run --all-files fix-encoding-pragma || true
 
 .PHONY: runserver
