@@ -9,6 +9,10 @@
 
 set -u -o pipefail
 
+# Generate new static files
+python manage.py collectstatic --noinput --clear > /dev/null
+python manage.py collectstatic --noinput
+
 NETWORK=dbnet
 
 # Check if the network has already been set up before creating one
