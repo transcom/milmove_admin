@@ -690,7 +690,7 @@ class Organizations(models.Model):
 class PaymentRequests(models.Model):
     id = models.UUIDField(primary_key=True)
     is_final = models.BooleanField(blank=True, null=True)
-    rejection_reason = models.CharField(max_length=-1, blank=True, null=True)
+    rejection_reason = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
 
