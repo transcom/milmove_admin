@@ -81,6 +81,6 @@ runserver: venv
 
 .PHONY: runserver_docker
 runserver_docker:
-	./scripts/run-docker
+	$(WITH_VENV) ./scripts/run-docker
 
 default: help
