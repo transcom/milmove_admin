@@ -9,6 +9,15 @@
 
 set -u -o pipefail
 
+if [ -n "${VIRTUAL_ENV+x}" ]; then
+  echo "Running in Virtual Environment!"
+else
+  echo "Must run from a Virtual Environment!"
+  echo "Run 'source .venv/bin/activate' to activate"
+  echo "Or run 'make runserver_docker' instead"
+  exit 1
+fi
+
 # Generate new static files
 python manage.py collectstatic --noinput --clear
 
