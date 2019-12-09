@@ -47,6 +47,7 @@ pre_commit_tests: ## Run pre-commit tests
 clean: ## Clean all generated files
 	find ./ -type d -name '__pycache__' -delete
 	find ./ -type f -name '*.pyc' -delete
+	rm -rf ./staticfiles/
 
 .PHONY: teardown
 teardown: ## Remove all virtualenv files
