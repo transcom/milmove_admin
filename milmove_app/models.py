@@ -200,6 +200,16 @@ class ClientCerts(models.Model):
         db_table = "client_certs"
 
 
+class ContractingOfficers(models.Model):
+    id = models.UUIDField(primary_key=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "contracting_officers"
+
+
 class Contractor(models.Model):
     id = models.UUIDField(primary_key=True)
     created_at = models.DateTimeField()
@@ -211,6 +221,16 @@ class Contractor(models.Model):
     class Meta:
         managed = False
         db_table = "contractor"
+
+
+class Customers(models.Model):
+    id = models.UUIDField(primary_key=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "customers"
 
 
 class DistanceCalculations(models.Model):
@@ -440,30 +460,6 @@ class FuelEiaDieselPrices(models.Model):
         db_table = "fuel_eia_diesel_prices"
 
 
-class GhcEntitlements(models.Model):
-    id = models.UUIDField(primary_key=True)
-    dependents_authorized = models.BooleanField(blank=True, null=True)
-    total_dependents = models.IntegerField(blank=True, null=True)
-    non_temporary_storage = models.BooleanField(blank=True, null=True)
-    privately_owned_vehicle = models.BooleanField(blank=True, null=True)
-    pro_gear_weight = models.IntegerField(blank=True, null=True)
-    pro_gear_weight_spouse = models.IntegerField(blank=True, null=True)
-    storage_in_transit = models.IntegerField(blank=True, null=True)
-    created_at = models.DateField(blank=True, null=True)
-    updated_at = models.DateField(blank=True, null=True)
-    move_task_order = models.ForeignKey(
-        "MoveTaskOrders",
-        models.DO_NOTHING,
-        related_name="ghc_entitlements_move_task_order",
-        blank=True,
-        null=True,
-    )
-
-    class Meta:
-        managed = False
-        db_table = "ghc_entitlements"
-
-
 class InvoiceNumberTrackers(models.Model):
     standard_carrier_alpha_code = models.TextField(primary_key=True)
     year = models.IntegerField()
@@ -525,66 +521,6 @@ class MoveDocuments(models.Model):
         managed = False
         db_table = "move_documents"
         unique_together = (("move", "document"),)
-
-
-class MoveTaskOrders(models.Model):
-    id = models.UUIDField(primary_key=True)
-    move_id = models.UUIDField(blank=True, null=True)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
-    customer = models.ForeignKey(
-        "ServiceMembers",
-        models.DO_NOTHING,
-        related_name="move_task_orders_customer",
-        blank=True,
-        null=True,
-    )
-    origin_duty_station = models.ForeignKey(
-        DutyStations,
-        models.DO_NOTHING,
-        related_name="move_task_orders_origin_duty_station",
-        blank=True,
-        null=True,
-    )
-    destination_duty_station = models.ForeignKey(
-        DutyStations,
-        models.DO_NOTHING,
-        related_name="move_task_orders_destination_duty_station",
-        blank=True,
-        null=True,
-    )
-    pickup_address = models.ForeignKey(
-        Addresses,
-        models.DO_NOTHING,
-        related_name="move_task_orders_pickup_address",
-        blank=True,
-        null=True,
-    )
-    destination_address = models.ForeignKey(
-        Addresses,
-        models.DO_NOTHING,
-        related_name="move_task_orders_destination_address",
-        blank=True,
-        null=True,
-    )
-    prime_actual_weight = models.IntegerField(blank=True, null=True)
-    requested_pickup_date = models.DateField(blank=True, null=True)
-    customer_remarks = models.TextField(blank=True, null=True)
-    type = models.TextField(blank=True, null=True)  # This field type is a guess.
-    status = models.TextField(blank=True, null=True)  # This field type is a guess.
-    prime_estimated_weight_recorded_date = models.DateTimeField(blank=True, null=True)
-    prime_estimated_weight = models.IntegerField(blank=True, null=True)
-    reference_id = models.CharField(unique=True, max_length=9, blank=True, null=True)
-    submitted_counseling_info_date = models.DateField(blank=True, null=True)
-    available_to_prime_date = models.DateField(blank=True, null=True)
-    scheduled_move_date = models.DateField(blank=True, null=True)
-    secondary_pickup_address_id = models.UUIDField(blank=True, null=True)
-    secondary_delivery_address_id = models.UUIDField(blank=True, null=True)
-    ppm_is_included = models.BooleanField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = "move_task_orders"
 
 
 class Moves(models.Model):
@@ -751,6 +687,18 @@ class Organizations(models.Model):
         db_table = "organizations"
 
 
+class PaymentRequests(models.Model):
+    id = models.UUIDField(primary_key=True)
+    is_final = models.BooleanField(blank=True, null=True)
+    rejection_reason = models.CharField(max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "payment_requests"
+
+
 class PersonallyProcuredMoves(models.Model):
     id = models.UUIDField(primary_key=True)
     move = models.ForeignKey(
@@ -797,6 +745,16 @@ class PersonallyProcuredMoves(models.Model):
     class Meta:
         managed = False
         db_table = "personally_procured_moves"
+
+
+class PpmOfficeUsers(models.Model):
+    id = models.UUIDField(primary_key=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "ppm_office_users"
 
 
 class ReContractYears(models.Model):
@@ -1142,29 +1100,23 @@ class Reimbursements(models.Model):
         db_table = "reimbursements"
 
 
+class Roles(models.Model):
+    id = models.IntegerField(primary_key=True)
+    role_type = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "roles"
+
+
 class SchemaMigration(models.Model):
     version = models.CharField(unique=True, max_length=14)
 
     class Meta:
         managed = False
         db_table = "schema_migration"
-
-
-class ServiceItems(models.Model):
-    id = models.UUIDField(primary_key=True)
-    move_task_order = models.ForeignKey(
-        MoveTaskOrders,
-        models.DO_NOTHING,
-        related_name="service_items_move_task_order",
-        blank=True,
-        null=True,
-    )
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = "service_items"
 
 
 class ServiceMembers(models.Model):
@@ -1421,6 +1373,16 @@ class TrafficDistributionLists(models.Model):
         )
 
 
+class TransportationInvoicingOfficers(models.Model):
+    id = models.UUIDField(primary_key=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "transportation_invoicing_officers"
+
+
 class TransportationOffices(models.Model):
     id = models.UUIDField(primary_key=True)
     shipping_office = models.ForeignKey(
@@ -1446,6 +1408,16 @@ class TransportationOffices(models.Model):
     class Meta:
         managed = False
         db_table = "transportation_offices"
+
+
+class TransportationOrderingOfficers(models.Model):
+    id = models.UUIDField(primary_key=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "transportation_ordering_officers"
 
 
 class TransportationServiceProviderPerformances(models.Model):
@@ -1521,6 +1493,17 @@ class Uploads(models.Model):
     class Meta:
         managed = False
         db_table = "uploads"
+
+
+class UserRoles(models.Model):
+    users = models.ForeignKey(
+        "Users", models.DO_NOTHING, related_name="user_roles_users"
+    )
+    roles = models.ForeignKey(Roles, models.DO_NOTHING, related_name="user_roles_roles")
+
+    class Meta:
+        managed = False
+        db_table = "user_roles"
 
 
 class Users(models.Model):

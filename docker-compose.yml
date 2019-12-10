@@ -1,20 +1,21 @@
 version: "3.3"
 
 services:
-  milmove_admin:
+  web:
     container_name: milmove_admin
     build:
       context: .
       dockerfile: Dockerfile
       cache_from:
-        - python:3.7-alpine
+        - python:3.8-alpine
+    command: milmove_admin.wsgi:application --name milmove_admin --bind 0.0.0.0:8000 --workers 3 --log-level info --error-logfile "-" --access-logfile "-"
     image: milmove_admin:latest
     stdin_open: true
     tty: true
+    expose:
+      - 8000
     volumes:
-      - .:/code
-    ports:
-      - "8000:8000"
+      - static_volume:/home/app/web/staticfiles
     environment:
       - DJANGO_ALLOWED_HOSTS
       - DJANGO_DEBUG
@@ -28,6 +29,22 @@ services:
       - DB_NAME
     external_links:
       - milmove-db-dev:db
+
+  nginx:
+    container_name: milmove_admin_nginx
+    build: ./nginx
+    image: milmove_admin_nginx:latest
+    stdin_open: false
+    tty: true
+    ports:
+      - "8001:80"
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+    depends_on:
+      - web
+
+volumes:
+  static_volume:
 
 networks:
   default:

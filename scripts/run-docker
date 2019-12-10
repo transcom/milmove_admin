@@ -7,7 +7,19 @@
 # It then runs the container using docker-compose.
 #
 
-set -eu -o pipefail
+set -u -o pipefail
+
+if [ -n "${VIRTUAL_ENV+x}" ]; then
+  echo "Running in Virtual Environment!"
+else
+  echo "Must run from a Virtual Environment!"
+  echo "Run 'source .venv/bin/activate' to activate"
+  echo "Or run 'make runserver_docker' instead"
+  exit 1
+fi
+
+# Generate new static files
+python manage.py collectstatic --noinput --clear
 
 NETWORK=dbnet
 
@@ -16,8 +28,15 @@ if docker network inspect "${NETWORK}" > /dev/null ; then
   echo "Network ${NETWORK} already created"
 else
   docker network create "${NETWORK}"
+fi
+
+CONTAINER=milmove-db-dev
+CONNECTED=$(docker network inspect dbnet | jq -r ".[0].Containers | map(.Name)[0]")
+if [[ "${CONNECTED}" == "${CONTAINER}" ]]; then
+  echo "Container ${CONTAINER} already connected to network ${NETWORK}"
+else
   docker network connect "${NETWORK}" milmove-db-dev
 fi
 
-docker-compose up
+docker-compose up --build
 docker-compose down

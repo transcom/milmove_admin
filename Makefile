@@ -8,18 +8,21 @@ WITH_VENV=. $(VENV_ACTIVATE);
 help:  ## Print the help documentation
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-$(VENV_ACTIVATE): requirements.txt
-	brew list libev || brew install libev
-	which virtualenv || pip install virtualenv
-	test -f $@ || virtualenv --python=python3 $(VENV_DIR)
+.PHONY: prereqs
+prereqs: ## Ensure prereqs are installed
+	./scripts/prereqs
+
+$(VENV_ACTIVATE): requirements.txt requirements-dev.txt
+	test -f $@ || virtualenv --python=python3.8 $(VENV_DIR)
 	$(WITH_VENV) pip install -r requirements.txt
+	$(WITH_VENV) pip install -r requirements-dev.txt
 	touch $@
 
 .PHONY: venv
-venv: $(VENV_ACTIVATE)
+venv: $(VENV_ACTIVATE) ## Install virtualenv and activate it
 
 .PHONY: setup
-setup: venv ensure_pre_commit
+setup: prereqs venv ensure_pre_commit ## Run all setup actions
 
 # This target ensures that the pre-commit hook is installed and kept up to date
 # if pre-commit updates.
@@ -44,6 +47,7 @@ pre_commit_tests: ## Run pre-commit tests
 clean: ## Clean all generated files
 	find ./ -type d -name '__pycache__' -delete
 	find ./ -type f -name '*.pyc' -delete
+	rm -rf ./staticfiles/
 
 .PHONY: teardown
 teardown: ## Remove all virtualenv files
@@ -63,14 +67,14 @@ migrate: venv
 
 .PHONY: createsuperuser
 createsuperuser: venv
-	$(WITH_VENV) python manage.py createsuperuser)
+	$(WITH_VENV) python manage.py createsuperuser
 
 .PHONY: generate_models
 generate_models: venv
 	$(WITH_VENV) python manage.py inspectdb > new_models.py
-	mv new_models.py milmoveapp/models.py
-	$(WITH_VENV) black milmoveapp/
-	pre-commit run --all-files fix-encoding-pragma
+	mv new_models.py milmove_app/models.py
+	pre-commit run --all-files black || true
+	pre-commit run --all-files fix-encoding-pragma || true
 
 .PHONY: runserver
 runserver: venv
@@ -78,6 +82,6 @@ runserver: venv
 
 .PHONY: runserver_docker
 runserver_docker:
-	./scripts/run-docker
+	$(WITH_VENV) ./scripts/run-docker
 
 default: help
