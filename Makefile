@@ -12,10 +12,10 @@ help:  ## Print the help documentation
 prereqs: ## Ensure prereqs are installed
 	./scripts/prereqs
 
-$(VENV_ACTIVATE): requirements.txt requirements-dev.txt
+$(VENV_ACTIVATE): app/requirements.txt app/requirements-dev.txt
 	test -f $@ || virtualenv --python=python3.8 $(VENV_DIR)
-	$(WITH_VENV) pip install -r requirements.txt
-	$(WITH_VENV) pip install -r requirements-dev.txt
+	$(WITH_VENV) pip install -r app/requirements.txt
+	$(WITH_VENV) pip install -r app/requirements-dev.txt
 	touch $@
 
 .PHONY: venv
@@ -47,7 +47,7 @@ pre_commit_tests: ## Run pre-commit tests
 clean: ## Clean all generated files
 	find ./ -type d -name '__pycache__' -delete
 	find ./ -type f -name '*.pyc' -delete
-	rm -rf ./staticfiles/
+	rm -rf ./app/staticfiles/
 
 .PHONY: teardown
 teardown: ## Remove all virtualenv files
@@ -62,26 +62,31 @@ lint: venv ## Run linting tests
 	$(WITH_VENV) flake8 .
 
 .PHONY: migrate
-migrate: venv
-	$(WITH_VENV) python manage.py migrate
+migrate: venv  ## Migrate the database
+	$(WITH_VENV) python app/manage.py migrate
 
 .PHONY: createsuperuser
-createsuperuser: venv
-	$(WITH_VENV) python manage.py createsuperuser
+createsuperuser: venv  ## Create a superuser
+	$(WITH_VENV) python app/manage.py createsuperuser
 
 .PHONY: generate_models
-generate_models: venv
-	$(WITH_VENV) python manage.py inspectdb > new_models.py
-	mv new_models.py milmove_app/models.py
+generate_models: venv  ## Generate new app models.py file
+	$(WITH_VENV) python app/manage.py inspectdb > new_models.py
+	mv new_models.py app/milmove_app/models.py
 	pre-commit run --all-files black || true
 	pre-commit run --all-files fix-encoding-pragma || true
+	@echo "Ignore errors from pre-commit, they are expected"
 
 .PHONY: runserver
-runserver: venv
-	$(WITH_VENV) python manage.py runserver
+runserver: venv  ## Run django server with built-in server
+	$(WITH_VENV) python app/manage.py runserver 0.0.0.0:8001
 
 .PHONY: runserver_docker
-runserver_docker:
-	$(WITH_VENV) ./scripts/run-docker
+runserver_docker:  ## Run django server from Docker with built-in server
+	$(WITH_VENV) ./scripts/runserver-docker
+
+.PHONY: runserver_docker_prod
+runserver_docker_prod:  ## Run django server from Docker with Nginx/Gunicorn
+	$(WITH_VENV) ./scripts/runserver-docker-prod
 
 default: help

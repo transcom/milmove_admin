@@ -19,7 +19,9 @@ else
 fi
 
 # Generate new static files
-python manage.py collectstatic --noinput --clear
+pushd app || exit
+  python manage.py collectstatic --noinput --clear
+popd || exit
 
 NETWORK=dbnet
 
@@ -38,5 +40,5 @@ else
   docker network connect "${NETWORK}" milmove-db-dev
 fi
 
-docker-compose up --build
-docker-compose down
+docker-compose -f docker-compose.prod.yml up --build
+docker-compose -f docker-compose.prod.yml down
