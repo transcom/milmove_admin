@@ -46,7 +46,7 @@ Then you can run the server:
 make runserver
 ```
 
-Finally, open the app at `http://localhost:8000/admin` and log in with the superuser you created.
+Finally, open the app at `http://localhost:8001/admin` and log in with the superuser you created.
 
 ## Docker Usage
 
