@@ -75,92 +75,6 @@ class AdminUsers(models.Model):
         db_table = "admin_users"
 
 
-class AuthGroup(models.Model):
-    name = models.CharField(unique=True, max_length=150)
-
-    class Meta:
-        managed = False
-        db_table = "auth_group"
-
-
-class AuthGroupPermissions(models.Model):
-    group = models.ForeignKey(
-        AuthGroup, models.DO_NOTHING, related_name="auth_group_permissions_group"
-    )
-    permission = models.ForeignKey(
-        "AuthPermission",
-        models.DO_NOTHING,
-        related_name="auth_group_permissions_permission",
-    )
-
-    class Meta:
-        managed = False
-        db_table = "auth_group_permissions"
-        unique_together = (("group", "permission"),)
-
-
-class AuthPermission(models.Model):
-    name = models.CharField(max_length=255)
-    content_type = models.ForeignKey(
-        "DjangoContentType",
-        models.DO_NOTHING,
-        related_name="auth_permission_content_type",
-    )
-    codename = models.CharField(max_length=100)
-
-    class Meta:
-        managed = False
-        db_table = "auth_permission"
-        unique_together = (("content_type", "codename"),)
-
-
-class AuthUser(models.Model):
-    password = models.CharField(max_length=128)
-    last_login = models.DateTimeField(blank=True, null=True)
-    is_superuser = models.BooleanField()
-    username = models.CharField(unique=True, max_length=150)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=150)
-    email = models.CharField(max_length=254)
-    is_staff = models.BooleanField()
-    is_active = models.BooleanField()
-    date_joined = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = "auth_user"
-
-
-class AuthUserGroups(models.Model):
-    user = models.ForeignKey(
-        AuthUser, models.DO_NOTHING, related_name="auth_user_groups_user"
-    )
-    group = models.ForeignKey(
-        AuthGroup, models.DO_NOTHING, related_name="auth_user_groups_group"
-    )
-
-    class Meta:
-        managed = False
-        db_table = "auth_user_groups"
-        unique_together = (("user", "group"),)
-
-
-class AuthUserUserPermissions(models.Model):
-    user = models.ForeignKey(
-        AuthUser, models.DO_NOTHING, related_name="auth_user_user_permissions_user"
-    )
-    permission = models.ForeignKey(
-        AuthPermission,
-        models.DO_NOTHING,
-        related_name="auth_user_user_permissions_permission",
-    )
-
-    class Meta:
-        managed = False
-        db_table = "auth_user_user_permissions"
-        unique_together = (("user", "permission"),)
-
-
 class BackupContacts(models.Model):
     id = models.UUIDField(primary_key=True)
     service_member_id = models.UUIDField()
@@ -194,6 +108,7 @@ class ClientCerts(models.Model):
     allow_marine_corps_orders_write = models.BooleanField()
     allow_navy_orders_read = models.BooleanField()
     allow_navy_orders_write = models.BooleanField()
+    allow_prime = models.BooleanField()
 
     class Meta:
         managed = False
@@ -227,6 +142,13 @@ class Customers(models.Model):
     id = models.UUIDField(primary_key=True)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
+    user = models.OneToOneField(
+        "Users", models.DO_NOTHING, related_name="customers_user", blank=True, null=True
+    )
+    dod_id = models.TextField()
+    first_name = models.TextField(blank=True, null=True)
+    last_name = models.TextField(blank=True, null=True)
+    agency = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -252,58 +174,6 @@ class DistanceCalculations(models.Model):
     class Meta:
         managed = False
         db_table = "distance_calculations"
-
-
-class DjangoAdminLog(models.Model):
-    action_time = models.DateTimeField()
-    object_id = models.TextField(blank=True, null=True)
-    object_repr = models.CharField(max_length=200)
-    action_flag = models.SmallIntegerField()
-    change_message = models.TextField()
-    content_type = models.ForeignKey(
-        "DjangoContentType",
-        models.DO_NOTHING,
-        related_name="django_admin_log_content_type",
-        blank=True,
-        null=True,
-    )
-    user = models.ForeignKey(
-        AuthUser, models.DO_NOTHING, related_name="django_admin_log_user"
-    )
-
-    class Meta:
-        managed = False
-        db_table = "django_admin_log"
-
-
-class DjangoContentType(models.Model):
-    app_label = models.CharField(max_length=100)
-    model = models.CharField(max_length=100)
-
-    class Meta:
-        managed = False
-        db_table = "django_content_type"
-        unique_together = (("app_label", "model"),)
-
-
-class DjangoMigrations(models.Model):
-    app = models.CharField(max_length=255)
-    name = models.CharField(max_length=255)
-    applied = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = "django_migrations"
-
-
-class DjangoSession(models.Model):
-    session_key = models.CharField(primary_key=True, max_length=40)
-    session_data = models.TextField()
-    expire_date = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = "django_session"
 
 
 class Documents(models.Model):
@@ -445,6 +315,23 @@ class ElectronicOrdersRevisions(models.Model):
         db_table = "electronic_orders_revisions"
 
 
+class Entitlements(models.Model):
+    id = models.UUIDField(primary_key=True)
+    dependents_authorized = models.BooleanField(blank=True, null=True)
+    total_dependents = models.IntegerField(blank=True, null=True)
+    non_temporary_storage = models.BooleanField(blank=True, null=True)
+    privately_owned_vehicle = models.BooleanField(blank=True, null=True)
+    pro_gear_weight = models.IntegerField(blank=True, null=True)
+    pro_gear_weight_spouse = models.IntegerField(blank=True, null=True)
+    storage_in_transit = models.IntegerField(blank=True, null=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "entitlements"
+
+
 class FuelEiaDieselPrices(models.Model):
     id = models.UUIDField(primary_key=True)
     pub_date = models.DateField()
@@ -494,6 +381,37 @@ class Invoices(models.Model):
         db_table = "invoices"
 
 
+class JppsoRegionStateAssignments(models.Model):
+    id = models.UUIDField(primary_key=True)
+    jppso_region = models.ForeignKey(
+        "JppsoRegions",
+        models.DO_NOTHING,
+        related_name="jppso_region_state_assignments_jppso_region",
+        blank=True,
+        null=True,
+    )
+    state_name = models.TextField(unique=True)
+    state_abbreviation = models.TextField(unique=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "jppso_region_state_assignments"
+
+
+class JppsoRegions(models.Model):
+    id = models.UUIDField(primary_key=True)
+    code = models.TextField(unique=True)
+    name = models.TextField()
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "jppso_regions"
+
+
 class MoveDocuments(models.Model):
     id = models.UUIDField(primary_key=True)
     move = models.ForeignKey(
@@ -521,6 +439,67 @@ class MoveDocuments(models.Model):
         managed = False
         db_table = "move_documents"
         unique_together = (("move", "document"),)
+
+
+class MoveOrders(models.Model):
+    id = models.UUIDField(primary_key=True)
+    customer = models.ForeignKey(
+        Customers,
+        models.DO_NOTHING,
+        related_name="move_orders_customer",
+        blank=True,
+        null=True,
+    )
+    origin_duty_station = models.ForeignKey(
+        DutyStations,
+        models.DO_NOTHING,
+        related_name="move_orders_origin_duty_station",
+        blank=True,
+        null=True,
+    )
+    destination_duty_station = models.ForeignKey(
+        DutyStations,
+        models.DO_NOTHING,
+        related_name="move_orders_destination_duty_station",
+        blank=True,
+        null=True,
+    )
+    entitlement = models.ForeignKey(
+        Entitlements,
+        models.DO_NOTHING,
+        related_name="move_orders_entitlement",
+        blank=True,
+        null=True,
+    )
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    confirmation_number = models.TextField(blank=True, null=True)
+    order_number = models.TextField(blank=True, null=True)
+    grade = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = "move_orders"
+
+
+class MoveTaskOrders(models.Model):
+    id = models.UUIDField(primary_key=True)
+    move_order = models.ForeignKey(
+        MoveOrders,
+        models.DO_NOTHING,
+        related_name="move_task_orders_move_order",
+        blank=True,
+        null=True,
+    )
+    reference_id = models.CharField(max_length=255, blank=True, null=True)
+    is_available_to_prime = models.BooleanField()
+    is_canceled = models.BooleanField()
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "move_task_orders"
 
 
 class Moves(models.Model):
@@ -559,6 +538,90 @@ class MovingExpenseDocuments(models.Model):
     class Meta:
         managed = False
         db_table = "moving_expense_documents"
+
+
+class MtoServiceItems(models.Model):
+    id = models.UUIDField(primary_key=True)
+    move_task_order = models.ForeignKey(
+        MoveTaskOrders,
+        models.DO_NOTHING,
+        related_name="mto_service_items_move_task_order",
+        blank=True,
+        null=True,
+    )
+    mto_shipment = models.ForeignKey(
+        "MtoShipments",
+        models.DO_NOTHING,
+        related_name="mto_service_items_mto_shipment",
+        blank=True,
+        null=True,
+    )
+    re_service = models.ForeignKey(
+        "ReServices",
+        models.DO_NOTHING,
+        related_name="mto_service_items_re_service",
+        blank=True,
+        null=True,
+    )
+    meta_id = models.UUIDField(blank=True, null=True)
+    meta_type = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "mto_service_items"
+
+
+class MtoShipments(models.Model):
+    id = models.UUIDField(primary_key=True)
+    move_task_order = models.ForeignKey(
+        MoveTaskOrders,
+        models.DO_NOTHING,
+        related_name="mto_shipments_move_task_order",
+        blank=True,
+        null=True,
+    )
+    scheduled_pickup_date = models.DateField(blank=True, null=True)
+    requested_pickup_date = models.DateField(blank=True, null=True)
+    customer_remarks = models.TextField(blank=True, null=True)
+    pickup_address = models.ForeignKey(
+        Addresses,
+        models.DO_NOTHING,
+        related_name="mto_shipments_pickup_address",
+        blank=True,
+        null=True,
+    )
+    destination_address = models.ForeignKey(
+        Addresses,
+        models.DO_NOTHING,
+        related_name="mto_shipments_destination_address",
+        blank=True,
+        null=True,
+    )
+    secondary_pickup_address = models.ForeignKey(
+        Addresses,
+        models.DO_NOTHING,
+        related_name="mto_shipments_secondary_pickup_address",
+        blank=True,
+        null=True,
+    )
+    secondary_delivery_address = models.ForeignKey(
+        Addresses,
+        models.DO_NOTHING,
+        related_name="mto_shipments_secondary_delivery_address",
+        blank=True,
+        null=True,
+    )
+    prime_estimated_weight = models.IntegerField(blank=True, null=True)
+    prime_estimated_weight_recorded_date = models.DateField(blank=True, null=True)
+    prime_actual_weight = models.IntegerField(blank=True, null=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "mto_shipments"
 
 
 class Notifications(models.Model):
@@ -689,14 +752,75 @@ class Organizations(models.Model):
 
 class PaymentRequests(models.Model):
     id = models.UUIDField(primary_key=True)
-    is_final = models.BooleanField(blank=True, null=True)
+    is_final = models.BooleanField()
     rejection_reason = models.CharField(max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+    move_task_order = models.ForeignKey(
+        MoveTaskOrders,
+        models.DO_NOTHING,
+        related_name="payment_requests_move_task_order",
+    )
+    status = models.TextField()  # This field type is a guess.
+    requested_at = models.DateTimeField()
+    reviewed_at = models.DateTimeField(blank=True, null=True)
+    sent_to_gex_at = models.DateTimeField(blank=True, null=True)
+    received_by_gex_at = models.DateTimeField(blank=True, null=True)
+    paid_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = "payment_requests"
+
+
+class PaymentServiceItemParams(models.Model):
+    id = models.UUIDField(primary_key=True)
+    payment_service_item = models.ForeignKey(
+        "PaymentServiceItems",
+        models.DO_NOTHING,
+        related_name="payment_service_item_params_payment_service_item",
+    )
+    service_item_param_key = models.ForeignKey(
+        "ServiceItemParamKeys",
+        models.DO_NOTHING,
+        related_name="payment_service_item_params_service_item_param_key",
+    )
+    value = models.CharField(max_length=80)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
 
     class Meta:
         managed = False
-        db_table = "payment_requests"
+        db_table = "payment_service_item_params"
+        unique_together = (("payment_service_item", "service_item_param_key"),)
+
+
+class PaymentServiceItems(models.Model):
+    id = models.UUIDField(primary_key=True)
+    payment_request = models.ForeignKey(
+        PaymentRequests,
+        models.DO_NOTHING,
+        related_name="payment_service_items_payment_request",
+    )
+    service_item = models.ForeignKey(
+        MtoServiceItems,
+        models.DO_NOTHING,
+        related_name="payment_service_items_service_item",
+    )
+    status = models.TextField()  # This field type is a guess.
+    price_cents = models.IntegerField()
+    rejection_reason = models.CharField(max_length=255, blank=True, null=True)
+    requested_at = models.DateTimeField()
+    approved_at = models.DateTimeField(blank=True, null=True)
+    denied_at = models.DateTimeField(blank=True, null=True)
+    sent_to_gex_at = models.DateTimeField(blank=True, null=True)
+    paid_at = models.DateTimeField(blank=True, null=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "payment_service_items"
 
 
 class PersonallyProcuredMoves(models.Model):
@@ -741,6 +865,12 @@ class PersonallyProcuredMoves(models.Model):
     submit_date = models.DateTimeField(blank=True, null=True)
     approve_date = models.DateTimeField(blank=True, null=True)
     reviewed_date = models.DateTimeField(blank=True, null=True)
+    has_pro_gear = models.TextField(
+        blank=True, null=True
+    )  # This field type is a guess.
+    has_pro_gear_over_thousand = models.TextField(
+        blank=True, null=True
+    )  # This field type is a guess.
 
     class Meta:
         managed = False
@@ -755,6 +885,25 @@ class PpmOfficeUsers(models.Model):
     class Meta:
         managed = False
         db_table = "ppm_office_users"
+
+
+class ProofOfServiceDocs(models.Model):
+    id = models.UUIDField(primary_key=True)
+    payment_request = models.ForeignKey(
+        PaymentRequests,
+        models.DO_NOTHING,
+        related_name="proof_of_service_docs_payment_request",
+    )
+    upload = models.ForeignKey(
+        "Uploads", models.DO_NOTHING, related_name="proof_of_service_docs_upload"
+    )
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "proof_of_service_docs"
+        unique_together = (("payment_request", "upload"),)
 
 
 class ReContractYears(models.Model):
@@ -1101,8 +1250,8 @@ class Reimbursements(models.Model):
 
 
 class Roles(models.Model):
-    id = models.IntegerField(primary_key=True)
-    role_type = models.TextField(blank=True, null=True)
+    id = models.UUIDField(primary_key=True)
+    role_type = models.TextField(unique=True, blank=True, null=True)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
 
@@ -1117,6 +1266,20 @@ class SchemaMigration(models.Model):
     class Meta:
         managed = False
         db_table = "schema_migration"
+
+
+class ServiceItemParamKeys(models.Model):
+    id = models.UUIDField(primary_key=True)
+    key = models.CharField(max_length=80)
+    description = models.CharField(max_length=255)
+    type = models.TextField()  # This field type is a guess.
+    origin = models.TextField()  # This field type is a guess.
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "service_item_param_keys"
 
 
 class ServiceMembers(models.Model):
@@ -1171,6 +1334,25 @@ class ServiceMembers(models.Model):
     class Meta:
         managed = False
         db_table = "service_members"
+
+
+class ServiceParams(models.Model):
+    id = models.UUIDField(primary_key=True)
+    service = models.ForeignKey(
+        ReServices, models.DO_NOTHING, related_name="service_params_service"
+    )
+    service_item_param_key = models.ForeignKey(
+        ServiceItemParamKeys,
+        models.DO_NOTHING,
+        related_name="service_params_service_item_param_key",
+    )
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "service_params"
+        unique_together = (("service", "service_item_param_key"),)
 
 
 class SignedCertifications(models.Model):
@@ -1414,6 +1596,13 @@ class TransportationOrderingOfficers(models.Model):
     id = models.UUIDField(primary_key=True)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
+    user = models.OneToOneField(
+        "Users",
+        models.DO_NOTHING,
+        related_name="transportation_ordering_officers_user",
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         managed = False
@@ -1495,17 +1684,6 @@ class Uploads(models.Model):
         db_table = "uploads"
 
 
-class UserRoles(models.Model):
-    users = models.ForeignKey(
-        "Users", models.DO_NOTHING, related_name="user_roles_users"
-    )
-    roles = models.ForeignKey(Roles, models.DO_NOTHING, related_name="user_roles_roles")
-
-    class Meta:
-        managed = False
-        db_table = "user_roles"
-
-
 class Users(models.Model):
     id = models.UUIDField(primary_key=True)
     login_gov_uuid = models.UUIDField(unique=True)
@@ -1518,6 +1696,18 @@ class Users(models.Model):
     class Meta:
         managed = False
         db_table = "users"
+
+
+class UsersRoles(models.Model):
+    user = models.ForeignKey(Users, models.DO_NOTHING, related_name="users_roles_user")
+    role = models.ForeignKey(Roles, models.DO_NOTHING, related_name="users_roles_role")
+    id = models.UUIDField(primary_key=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "users_roles"
 
 
 class WeightTicketSetDocuments(models.Model):
