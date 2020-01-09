@@ -24,6 +24,10 @@ has docker "Get Docker CE for Mac from https://download.docker.com/mac/stable/Do
 # not on CircleCI
 if [[ -z ${CIRCLECI-} ]]; then
     has direnv "brew install direnv"
+    if [[ -z ${PPP_INFRA_PATH-} ]]; then
+      echo "Run 'direnv allow' to ensure environment variables are set"
+      prereqs_found=false
+    fi
 fi
 
 
