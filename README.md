@@ -14,6 +14,10 @@ You will need to install prereqs. Run the following script and follow any instru
 
 After installation ensure you run `direnv allow` to pick up environment variables for this project.
 
+```sh
+direnv allow
+```
+
 ## Usage
 
 Before getting started go to the MilMove App and migrate the DB:
