@@ -82,12 +82,24 @@ DATABASES = {
     "default": {
         "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.postgresql"),
         "NAME": os.environ.get("DB_NAME", os.path.join(BASE_DIR, "dev_db")),
+        "OPTIONS": {"options": "-c search_path=django"},
         "USER": os.environ.get("DB_USER", "postgres"),
         "PASSWORD": os.environ.get("DB_PASSWORD", "password"),
         "HOST": os.environ.get("DB_HOST", "localhost"),
         "PORT": os.environ.get("DB_PORT", "5432"),
-    }
+    },
+    "milmove": {
+        "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.postgresql"),
+        "NAME": os.environ.get("DB_NAME", os.path.join(BASE_DIR, "dev_db")),
+        "OPTIONS": {"options": "-c default_transaction_read_only=on"},
+        "USER": os.environ.get("DB_USER", "postgres"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", "password"),
+        "HOST": os.environ.get("DB_HOST", "localhost"),
+        "PORT": os.environ.get("DB_PORT", "5432"),
+    },
 }
+
+DATABASE_ROUTERS = ["milmove_app.dbrouters.MilmoveRouter"]
 
 
 # Password validation
