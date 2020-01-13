@@ -337,11 +337,10 @@ class Entitlements(models.Model):
     total_dependents = models.IntegerField(blank=True, null=True)
     non_temporary_storage = models.BooleanField(blank=True, null=True)
     privately_owned_vehicle = models.BooleanField(blank=True, null=True)
-    pro_gear_weight = models.IntegerField(blank=True, null=True)
-    pro_gear_weight_spouse = models.IntegerField(blank=True, null=True)
     storage_in_transit = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
+    authorized_weight = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False

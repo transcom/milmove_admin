@@ -6,11 +6,17 @@ from django.db import connections
 from django.core.management.commands.inspectdb import Command as InspectDBCommand
 
 
+def milmove_table_name_filter(table_name):
+    return not (table_name.startswith("auth_") or table_name.startswith("django_"))
+
+
 class Command(InspectDBCommand):
     def handle_inspection(self, options):
         connection = connections[options["database"]]
         # 'table_name_filter' is a stealth option
-        table_name_filter = options.get("table_name_filter")
+        table_name_filter = (
+            options.get("table_name_filter") or milmove_table_name_filter
+        )
 
         def table2model(table_name):
             return re.sub(r"[^a-zA-Z0-9]", "", table_name.title())
