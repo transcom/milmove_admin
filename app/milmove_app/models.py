@@ -149,6 +149,22 @@ class Customers(models.Model):
     first_name = models.TextField(blank=True, null=True)
     last_name = models.TextField(blank=True, null=True)
     agency = models.TextField(blank=True, null=True)
+    email = models.TextField(blank=True, null=True)
+    phone = models.TextField(blank=True, null=True)
+    current_address = models.ForeignKey(
+        Addresses,
+        models.DO_NOTHING,
+        related_name="customers_current_address",
+        blank=True,
+        null=True,
+    )
+    destination_address = models.ForeignKey(
+        Addresses,
+        models.DO_NOTHING,
+        related_name="customers_destination_address",
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         managed = False
@@ -321,11 +337,10 @@ class Entitlements(models.Model):
     total_dependents = models.IntegerField(blank=True, null=True)
     non_temporary_storage = models.BooleanField(blank=True, null=True)
     privately_owned_vehicle = models.BooleanField(blank=True, null=True)
-    pro_gear_weight = models.IntegerField(blank=True, null=True)
-    pro_gear_weight_spouse = models.IntegerField(blank=True, null=True)
     storage_in_transit = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
+    authorized_weight = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -1254,6 +1269,7 @@ class Roles(models.Model):
     role_type = models.TextField(unique=True, blank=True, null=True)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
+    role_name = models.CharField(max_length=255)
 
     class Meta:
         managed = False
