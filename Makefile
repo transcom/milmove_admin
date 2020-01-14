@@ -63,6 +63,7 @@ lint: venv ## Run linting tests
 
 .PHONY: migrate
 migrate: venv  ## Migrate the database
+	psql postgres://postgres:"${DB_PASSWORD}"@${DB_HOST}:"${DB_PORT}"/"${DB_NAME}" -c "CREATE SCHEMA IF NOT EXISTS django"
 	$(WITH_VENV) python app/manage.py migrate
 
 .PHONY: createsuperuser
@@ -71,7 +72,7 @@ createsuperuser: venv  ## Create a superuser
 
 .PHONY: generate_models
 generate_models: venv  ## Generate new app models.py file
-	$(WITH_VENV) python app/manage.py inspectdb > new_models.py
+	$(WITH_VENV) python app/manage.py inspectdb --database milmove > new_models.py
 	mv new_models.py app/milmove_app/models.py
 	pre-commit run --all-files black || true
 	pre-commit run --all-files fix-encoding-pragma || true
