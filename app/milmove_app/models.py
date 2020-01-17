@@ -26,6 +26,7 @@ class AccessCodes(models.Model):
     class Meta:
         managed = False
         db_table = "access_codes"
+        verbose_name = "access code"
 
 
 class Addresses(models.Model):
@@ -43,6 +44,7 @@ class Addresses(models.Model):
     class Meta:
         managed = False
         db_table = "addresses"
+        verbose_name = "addresse"
 
 
 class AdminUsers(models.Model):
@@ -73,6 +75,7 @@ class AdminUsers(models.Model):
     class Meta:
         managed = False
         db_table = "admin_users"
+        verbose_name = "admin user"
 
 
 class BackupContacts(models.Model):
@@ -88,6 +91,7 @@ class BackupContacts(models.Model):
     class Meta:
         managed = False
         db_table = "backup_contacts"
+        verbose_name = "backup contact"
 
 
 class ClientCerts(models.Model):
@@ -113,6 +117,7 @@ class ClientCerts(models.Model):
     class Meta:
         managed = False
         db_table = "client_certs"
+        verbose_name = "client cert"
 
 
 class ContractingOfficers(models.Model):
@@ -123,6 +128,7 @@ class ContractingOfficers(models.Model):
     class Meta:
         managed = False
         db_table = "contracting_officers"
+        verbose_name = "contracting officer"
 
 
 class Contractor(models.Model):
@@ -136,6 +142,7 @@ class Contractor(models.Model):
     class Meta:
         managed = False
         db_table = "contractor"
+        verbose_name = "contractor"
 
 
 class Customers(models.Model):
@@ -169,6 +176,7 @@ class Customers(models.Model):
     class Meta:
         managed = False
         db_table = "customers"
+        verbose_name = "customer"
 
 
 class DistanceCalculations(models.Model):
@@ -190,6 +198,7 @@ class DistanceCalculations(models.Model):
     class Meta:
         managed = False
         db_table = "distance_calculations"
+        verbose_name = "distance calculation"
 
 
 class Documents(models.Model):
@@ -204,6 +213,7 @@ class Documents(models.Model):
     class Meta:
         managed = False
         db_table = "documents"
+        verbose_name = "document"
 
 
 class DpsUsers(models.Model):
@@ -217,6 +227,7 @@ class DpsUsers(models.Model):
     class Meta:
         managed = False
         db_table = "dps_users"
+        verbose_name = "DPS user"
 
 
 class DutyStationNames(models.Model):
@@ -233,6 +244,7 @@ class DutyStationNames(models.Model):
     class Meta:
         managed = False
         db_table = "duty_station_names"
+        verbose_name = "duty station name"
 
 
 class DutyStations(models.Model):
@@ -255,6 +267,7 @@ class DutyStations(models.Model):
     class Meta:
         managed = False
         db_table = "duty_stations"
+        verbose_name = "duty station"
 
 
 class ElectronicOrders(models.Model):
@@ -269,6 +282,7 @@ class ElectronicOrders(models.Model):
         managed = False
         db_table = "electronic_orders"
         unique_together = (("issuer", "orders_number"),)
+        verbose_name = "electronic order"
 
 
 class ElectronicOrdersRevisions(models.Model):
@@ -329,6 +343,7 @@ class ElectronicOrdersRevisions(models.Model):
     class Meta:
         managed = False
         db_table = "electronic_orders_revisions"
+        verbose_name = "electronic orders revision"
 
 
 class Entitlements(models.Model):
@@ -345,6 +360,7 @@ class Entitlements(models.Model):
     class Meta:
         managed = False
         db_table = "entitlements"
+        verbose_name = "entitlement"
 
 
 class FuelEiaDieselPrices(models.Model):
@@ -360,6 +376,7 @@ class FuelEiaDieselPrices(models.Model):
     class Meta:
         managed = False
         db_table = "fuel_eia_diesel_prices"
+        verbose_name = "fuel EIA diesel price"
 
 
 class InvoiceNumberTrackers(models.Model):
@@ -371,6 +388,7 @@ class InvoiceNumberTrackers(models.Model):
         managed = False
         db_table = "invoice_number_trackers"
         unique_together = (("standard_carrier_alpha_code", "year"),)
+        verbose_name = "invoice number tracker"
 
 
 class Invoices(models.Model):
@@ -394,6 +412,7 @@ class Invoices(models.Model):
     class Meta:
         managed = False
         db_table = "invoices"
+        verbose_name = "invoice"
 
 
 class JppsoRegionStateAssignments(models.Model):
@@ -413,6 +432,7 @@ class JppsoRegionStateAssignments(models.Model):
     class Meta:
         managed = False
         db_table = "jppso_region_state_assignments"
+        verbose_name = "JPPSO region state assignment"
 
 
 class JppsoRegions(models.Model):
@@ -425,6 +445,7 @@ class JppsoRegions(models.Model):
     class Meta:
         managed = False
         db_table = "jppso_regions"
+        verbose_name = "JPPSO region"
 
 
 class MoveDocuments(models.Model):
@@ -454,6 +475,7 @@ class MoveDocuments(models.Model):
         managed = False
         db_table = "move_documents"
         unique_together = (("move", "document"),)
+        verbose_name = "move document"
 
 
 class MoveOrders(models.Model):
@@ -495,6 +517,7 @@ class MoveOrders(models.Model):
     class Meta:
         managed = False
         db_table = "move_orders"
+        verbose_name = "move order"
 
 
 class MoveTaskOrders(models.Model):
@@ -515,6 +538,7 @@ class MoveTaskOrders(models.Model):
     class Meta:
         managed = False
         db_table = "move_task_orders"
+        verbose_name = "move task order"
 
 
 class Moves(models.Model):
@@ -531,6 +555,7 @@ class Moves(models.Model):
     class Meta:
         managed = False
         db_table = "moves"
+        verbose_name = "move"
 
 
 class MovingExpenseDocuments(models.Model):
@@ -553,6 +578,7 @@ class MovingExpenseDocuments(models.Model):
     class Meta:
         managed = False
         db_table = "moving_expense_documents"
+        verbose_name = "moving expense document"
 
 
 class MtoServiceItems(models.Model):
@@ -586,6 +612,7 @@ class MtoServiceItems(models.Model):
     class Meta:
         managed = False
         db_table = "mto_service_items"
+        verbose_name = "MTO service item"
 
 
 class MtoShipments(models.Model):
@@ -637,6 +664,7 @@ class MtoShipments(models.Model):
     class Meta:
         managed = False
         db_table = "mto_shipments"
+        verbose_name = "MTO shipment"
 
 
 class Notifications(models.Model):
@@ -655,6 +683,7 @@ class Notifications(models.Model):
     class Meta:
         managed = False
         db_table = "notifications"
+        verbose_name = "notification"
 
 
 class OfficeEmails(models.Model):
@@ -672,6 +701,7 @@ class OfficeEmails(models.Model):
     class Meta:
         managed = False
         db_table = "office_emails"
+        verbose_name = "office email"
 
 
 class OfficePhoneLines(models.Model):
@@ -691,6 +721,7 @@ class OfficePhoneLines(models.Model):
     class Meta:
         managed = False
         db_table = "office_phone_lines"
+        verbose_name = "office phone line"
 
 
 class OfficeUsers(models.Model):
@@ -720,6 +751,7 @@ class OfficeUsers(models.Model):
     class Meta:
         managed = False
         db_table = "office_users"
+        verbose_name = "office user"
 
 
 class Orders(models.Model):
@@ -750,6 +782,7 @@ class Orders(models.Model):
     class Meta:
         managed = False
         db_table = "orders"
+        verbose_name = "order"
 
 
 class Organizations(models.Model):
@@ -763,6 +796,7 @@ class Organizations(models.Model):
     class Meta:
         managed = False
         db_table = "organizations"
+        verbose_name = "organization"
 
 
 class PaymentRequests(models.Model):
@@ -786,6 +820,7 @@ class PaymentRequests(models.Model):
     class Meta:
         managed = False
         db_table = "payment_requests"
+        verbose_name = "payment request"
 
 
 class PaymentServiceItemParams(models.Model):
@@ -808,6 +843,7 @@ class PaymentServiceItemParams(models.Model):
         managed = False
         db_table = "payment_service_item_params"
         unique_together = (("payment_service_item", "service_item_param_key"),)
+        verbose_name = "payment service item param"
 
 
 class PaymentServiceItems(models.Model):
@@ -836,6 +872,7 @@ class PaymentServiceItems(models.Model):
     class Meta:
         managed = False
         db_table = "payment_service_items"
+        verbose_name = "payment service item"
 
 
 class PersonallyProcuredMoves(models.Model):
@@ -890,6 +927,7 @@ class PersonallyProcuredMoves(models.Model):
     class Meta:
         managed = False
         db_table = "personally_procured_moves"
+        verbose_name = "personally procured move"
 
 
 class PpmOfficeUsers(models.Model):
@@ -900,6 +938,7 @@ class PpmOfficeUsers(models.Model):
     class Meta:
         managed = False
         db_table = "ppm_office_users"
+        verbose_name = "PPM office user"
 
 
 class ProofOfServiceDocs(models.Model):
@@ -919,6 +958,7 @@ class ProofOfServiceDocs(models.Model):
         managed = False
         db_table = "proof_of_service_docs"
         unique_together = (("payment_request", "upload"),)
+        verbose_name = "proof of service doc"
 
 
 class ReContractYears(models.Model):
@@ -937,6 +977,7 @@ class ReContractYears(models.Model):
     class Meta:
         managed = False
         db_table = "re_contract_years"
+        verbose_name = "RE contract year"
 
 
 class ReContracts(models.Model):
@@ -949,6 +990,7 @@ class ReContracts(models.Model):
     class Meta:
         managed = False
         db_table = "re_contracts"
+        verbose_name = "RE contract"
 
 
 class ReDomesticAccessorialPrices(models.Model):
@@ -972,6 +1014,7 @@ class ReDomesticAccessorialPrices(models.Model):
         managed = False
         db_table = "re_domestic_accessorial_prices"
         unique_together = (("contract", "service", "services_schedule"),)
+        verbose_name = "RE domestic accessorial price"
 
 
 class ReDomesticLinehaulPrices(models.Model):
@@ -1009,6 +1052,7 @@ class ReDomesticLinehaulPrices(models.Model):
                 "domestic_service_area",
             ),
         )
+        verbose_name = "RE domestic linehaul price"
 
 
 class ReDomesticOtherPrices(models.Model):
@@ -1029,6 +1073,7 @@ class ReDomesticOtherPrices(models.Model):
         managed = False
         db_table = "re_domestic_other_prices"
         unique_together = (("contract", "service", "is_peak_period", "schedule"),)
+        verbose_name = "RE domestic other price"
 
 
 class ReDomesticServiceAreaPrices(models.Model):
@@ -1059,6 +1104,7 @@ class ReDomesticServiceAreaPrices(models.Model):
         unique_together = (
             ("contract", "service", "is_peak_period", "domestic_service_area"),
         )
+        verbose_name = "RE domestic service area price"
 
 
 class ReDomesticServiceAreas(models.Model):
@@ -1074,6 +1120,7 @@ class ReDomesticServiceAreas(models.Model):
     class Meta:
         managed = False
         db_table = "re_domestic_service_areas"
+        verbose_name = "RE domestic service area"
 
 
 class ReIntlAccessorialPrices(models.Model):
@@ -1097,6 +1144,7 @@ class ReIntlAccessorialPrices(models.Model):
         managed = False
         db_table = "re_intl_accessorial_prices"
         unique_together = (("contract", "service", "market"),)
+        verbose_name = "RE intl accessorial price"
 
 
 class ReIntlOtherPrices(models.Model):
@@ -1119,6 +1167,7 @@ class ReIntlOtherPrices(models.Model):
         managed = False
         db_table = "re_intl_other_prices"
         unique_together = (("contract", "service", "is_peak_period", "rate_area"),)
+        verbose_name = "RE intl other price"
 
 
 class ReIntlPrices(models.Model):
@@ -1154,6 +1203,7 @@ class ReIntlPrices(models.Model):
                 "destination_rate_area",
             ),
         )
+        verbose_name = "RE intl price"
 
 
 class ReRateAreas(models.Model):
@@ -1167,6 +1217,7 @@ class ReRateAreas(models.Model):
     class Meta:
         managed = False
         db_table = "re_rate_areas"
+        verbose_name = "RE rate area"
 
 
 class ReServices(models.Model):
@@ -1179,6 +1230,7 @@ class ReServices(models.Model):
     class Meta:
         managed = False
         db_table = "re_services"
+        verbose_name = "RE service"
 
 
 class ReShipmentTypePrices(models.Model):
@@ -1186,32 +1238,19 @@ class ReShipmentTypePrices(models.Model):
     contract = models.ForeignKey(
         ReContracts, models.DO_NOTHING, related_name="re_shipment_type_prices_contract"
     )
-    shipment_type = models.ForeignKey(
-        "ReShipmentTypes",
-        models.DO_NOTHING,
-        related_name="re_shipment_type_prices_shipment_type",
+    service = models.ForeignKey(
+        ReServices, models.DO_NOTHING, related_name="re_shipment_type_prices_service"
     )
     market = models.CharField(max_length=1)
-    factor_hundredths = models.IntegerField()
+    factor = models.DecimalField(max_digits=3, decimal_places=2)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
 
     class Meta:
         managed = False
         db_table = "re_shipment_type_prices"
-        unique_together = (("contract", "shipment_type", "market"),)
-
-
-class ReShipmentTypes(models.Model):
-    id = models.UUIDField(primary_key=True)
-    code = models.CharField(unique=True, max_length=20)
-    name = models.CharField(max_length=80)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = "re_shipment_types"
+        unique_together = (("contract", "service", "market"),)
+        verbose_name = "RE shipment type price"
 
 
 class ReTaskOrderFees(models.Model):
@@ -1232,6 +1271,7 @@ class ReTaskOrderFees(models.Model):
         managed = False
         db_table = "re_task_order_fees"
         unique_together = (("contract_year", "service"),)
+        verbose_name = "RE task order fee"
 
 
 class ReZip3S(models.Model):
@@ -1248,6 +1288,7 @@ class ReZip3S(models.Model):
     class Meta:
         managed = False
         db_table = "re_zip3s"
+        verbose_name = "RE zip3"
 
 
 class Reimbursements(models.Model):
@@ -1262,6 +1303,7 @@ class Reimbursements(models.Model):
     class Meta:
         managed = False
         db_table = "reimbursements"
+        verbose_name = "reimbursement"
 
 
 class Roles(models.Model):
@@ -1274,6 +1316,7 @@ class Roles(models.Model):
     class Meta:
         managed = False
         db_table = "roles"
+        verbose_name = "role"
 
 
 class SchemaMigration(models.Model):
@@ -1282,6 +1325,7 @@ class SchemaMigration(models.Model):
     class Meta:
         managed = False
         db_table = "schema_migration"
+        verbose_name = "schema migration"
 
 
 class ServiceItemParamKeys(models.Model):
@@ -1296,6 +1340,7 @@ class ServiceItemParamKeys(models.Model):
     class Meta:
         managed = False
         db_table = "service_item_param_keys"
+        verbose_name = "service item param key"
 
 
 class ServiceMembers(models.Model):
@@ -1350,6 +1395,7 @@ class ServiceMembers(models.Model):
     class Meta:
         managed = False
         db_table = "service_members"
+        verbose_name = "service member"
 
 
 class ServiceParams(models.Model):
@@ -1369,6 +1415,7 @@ class ServiceParams(models.Model):
         managed = False
         db_table = "service_params"
         unique_together = (("service", "service_item_param_key"),)
+        verbose_name = "service param"
 
 
 class SignedCertifications(models.Model):
@@ -1396,6 +1443,7 @@ class SignedCertifications(models.Model):
     class Meta:
         managed = False
         db_table = "signed_certifications"
+        verbose_name = "signed certification"
 
 
 class SocialSecurityNumbers(models.Model):
@@ -1407,6 +1455,7 @@ class SocialSecurityNumbers(models.Model):
     class Meta:
         managed = False
         db_table = "social_security_numbers"
+        verbose_name = "social security number"
 
 
 class Tariff400NgFullPackRates(models.Model):
@@ -1423,6 +1472,7 @@ class Tariff400NgFullPackRates(models.Model):
     class Meta:
         managed = False
         db_table = "tariff400ng_full_pack_rates"
+        verbose_name = "Tariff400NG full pack rate"
 
 
 class Tariff400NgFullUnpackRates(models.Model):
@@ -1437,6 +1487,7 @@ class Tariff400NgFullUnpackRates(models.Model):
     class Meta:
         managed = False
         db_table = "tariff400ng_full_unpack_rates"
+        verbose_name = "Tariff400NG full unpack rate"
 
 
 class Tariff400NgItemRates(models.Model):
@@ -1454,6 +1505,7 @@ class Tariff400NgItemRates(models.Model):
     class Meta:
         managed = False
         db_table = "tariff400ng_item_rates"
+        verbose_name = "Tariff400NG item rate"
 
 
 class Tariff400NgItems(models.Model):
@@ -1472,6 +1524,7 @@ class Tariff400NgItems(models.Model):
     class Meta:
         managed = False
         db_table = "tariff400ng_items"
+        verbose_name = "Tariff400NG item"
 
 
 class Tariff400NgLinehaulRates(models.Model):
@@ -1490,6 +1543,7 @@ class Tariff400NgLinehaulRates(models.Model):
     class Meta:
         managed = False
         db_table = "tariff400ng_linehaul_rates"
+        verbose_name = "Tariff400NG linehaul rate"
 
 
 class Tariff400NgServiceAreas(models.Model):
@@ -1510,6 +1564,7 @@ class Tariff400NgServiceAreas(models.Model):
     class Meta:
         managed = False
         db_table = "tariff400ng_service_areas"
+        verbose_name = "Tariff400NG service area"
 
 
 class Tariff400NgShorthaulRates(models.Model):
@@ -1525,6 +1580,7 @@ class Tariff400NgShorthaulRates(models.Model):
     class Meta:
         managed = False
         db_table = "tariff400ng_shorthaul_rates"
+        verbose_name = "Tariff400NG shorthaul rate"
 
 
 class Tariff400NgZip3S(models.Model):
@@ -1541,6 +1597,7 @@ class Tariff400NgZip3S(models.Model):
     class Meta:
         managed = False
         db_table = "tariff400ng_zip3s"
+        verbose_name = "Tariff400NG zip3"
 
 
 class Tariff400NgZip5RateAreas(models.Model):
@@ -1553,6 +1610,7 @@ class Tariff400NgZip5RateAreas(models.Model):
     class Meta:
         managed = False
         db_table = "tariff400ng_zip5_rate_areas"
+        verbose_name = "Tariff400NG zip5 rate area"
 
 
 class TrafficDistributionLists(models.Model):
@@ -1569,6 +1627,7 @@ class TrafficDistributionLists(models.Model):
         unique_together = (
             ("source_rate_area", "destination_region", "code_of_service"),
         )
+        verbose_name = "traffic distribution list"
 
 
 class TransportationInvoicingOfficers(models.Model):
@@ -1579,6 +1638,7 @@ class TransportationInvoicingOfficers(models.Model):
     class Meta:
         managed = False
         db_table = "transportation_invoicing_officers"
+        verbose_name = "transportation invoicing officer"
 
 
 class TransportationOffices(models.Model):
@@ -1606,6 +1666,7 @@ class TransportationOffices(models.Model):
     class Meta:
         managed = False
         db_table = "transportation_offices"
+        verbose_name = "transportation office"
 
 
 class TransportationOrderingOfficers(models.Model):
@@ -1623,6 +1684,7 @@ class TransportationOrderingOfficers(models.Model):
     class Meta:
         managed = False
         db_table = "transportation_ordering_officers"
+        verbose_name = "transportation ordering officer"
 
 
 class TransportationServiceProviderPerformances(models.Model):
@@ -1652,6 +1714,7 @@ class TransportationServiceProviderPerformances(models.Model):
     class Meta:
         managed = False
         db_table = "transportation_service_provider_performances"
+        verbose_name = "transportation service provider performance"
 
 
 class TransportationServiceProviders(models.Model):
@@ -1672,6 +1735,7 @@ class TransportationServiceProviders(models.Model):
     class Meta:
         managed = False
         db_table = "transportation_service_providers"
+        verbose_name = "transportation service provider"
 
 
 class Uploads(models.Model):
@@ -1698,6 +1762,7 @@ class Uploads(models.Model):
     class Meta:
         managed = False
         db_table = "uploads"
+        verbose_name = "upload"
 
 
 class Users(models.Model):
@@ -1712,6 +1777,7 @@ class Users(models.Model):
     class Meta:
         managed = False
         db_table = "users"
+        verbose_name = "user"
 
 
 class UsersRoles(models.Model):
@@ -1724,11 +1790,12 @@ class UsersRoles(models.Model):
     class Meta:
         managed = False
         db_table = "users_roles"
+        verbose_name = "users role"
 
 
 class WeightTicketSetDocuments(models.Model):
     id = models.UUIDField(primary_key=True)
-    vehicle_options = models.TextField(blank=True, null=True)
+    weight_ticket_set_type = models.TextField(blank=True, null=True)
     vehicle_nickname = models.TextField(blank=True, null=True)
     move_document = models.ForeignKey(
         MoveDocuments,
@@ -1750,3 +1817,4 @@ class WeightTicketSetDocuments(models.Model):
     class Meta:
         managed = False
         db_table = "weight_ticket_set_documents"
+        verbose_name = "weight ticket set document"

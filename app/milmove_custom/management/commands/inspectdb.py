@@ -4,6 +4,20 @@ import re
 from django.db import connections
 
 from django.core.management.commands.inspectdb import Command as InspectDBCommand
+from django.utils.text import camel_case_to_spaces
+
+milmove_replacements = {
+    "dps": "DPS",
+    "eia": "EIA",
+    "jppso": "JPPSO",
+    "mto": "MTO",
+    "ppm": "PPM",
+    "re": "RE",
+    "tariff400 ng": "Tariff400NG",
+}
+milmove_replacements_re = "|".join(
+    r"\b%s\b" % re.escape(s) for s in milmove_replacements
+)
 
 
 class Command(InspectDBCommand):
@@ -180,3 +194,15 @@ class Command(InspectDBCommand):
                     table_name, constraints, column_to_field_name, is_view, is_partition
                 ):
                     yield meta_line
+
+                # Add an appropriate verbose_name given what we know about the milmove table names
+                # (most are plural, some have acronyms).
+                verbose_name = camel_case_to_spaces(table2model(table_name))
+                verbose_name = re.sub(
+                    milmove_replacements_re,
+                    lambda match: milmove_replacements[match.group(0)],
+                    verbose_name,
+                )
+                if verbose_name.endswith("s"):
+                    verbose_name = verbose_name[:-1]
+                yield "        verbose_name = %r" % verbose_name
