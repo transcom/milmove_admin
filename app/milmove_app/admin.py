@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import inspect
 import sys
+from dataclasses import dataclass
 
 from django.contrib import admin
 from django.urls import reverse
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 
 from .models import *  # noqa
 
@@ -34,7 +35,83 @@ Tariff400NgZip3S.__str__ = (
 )
 
 
-class MilmoveModelAdmin(admin.ModelAdmin):
+@dataclass
+class LinkField:
+    field_name: str
+    admin_order_field: str = None
+    short_description: str = None
+    func_name: str = None
+
+
+# Inspired by https://stackoverflow.com/a/46527083
+class RelatedObjectLinkMixin(object):
+    """
+    Mixin for ModelAdmins to include a "link_fields" option.  This should be set to a tuple of related model
+    fields in which you want to generate a special "<field>_link" callable that would show the string
+    representation of the related object that is linked to that object's change page in the admin.
+
+    As show below, each link field can either be:
+      1) a field name -- the field can be a link by using <field>_link in the field list, but it will
+         get a default label and won't be sortable.
+      2) a LinkField object -- in addition to the field name, you can also optionally pass in a field
+         to use for ordering, a short description, and even change the "<field>_link" name.
+
+    Example:
+        link_fields = (
+            "uploaded_orders",
+            (LinkField("service_member", "service_member__last_name")),
+        )
+        list_display = [..., 'service_member_link', ...]
+        fields = [..., 'uploaded_orders_link', ...]
+    """
+
+    link_fields = []
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.link_fields:
+            for link_fields_item in self.link_fields:
+                admin_order_field = func_name = None
+                if isinstance(link_fields_item, LinkField):
+                    field_name = link_fields_item.field_name
+                    admin_order_field = link_fields_item.admin_order_field
+                    short_description = (
+                        link_fields_item.short_description
+                        or field_name.replace("_", " ")
+                    )
+                    func_name = link_fields_item.func_name
+                else:
+                    field_name = short_description = link_fields_item
+
+                if not func_name:
+                    func_name = field_name + "_link"
+                setattr(
+                    self,
+                    func_name,
+                    self._generate_link_func(
+                        field_name, admin_order_field, short_description
+                    ),
+                )
+
+    def _generate_link_func(self, field_name, admin_order_field, short_description):
+        def _func(obj):
+            related_obj = getattr(obj, field_name)
+            if not related_obj:
+                return None
+            url = reverse(
+                f"admin:{related_obj._meta.app_label}_{related_obj._meta.model_name}_change",
+                args=(related_obj.pk,),
+            )
+            return format_html('<a href="{}">{}</a>', url, related_obj)
+
+        _func.short_description = short_description
+        if admin_order_field:
+            _func.admin_order_field = admin_order_field
+
+        return _func
+
+
+class MilmoveModelAdmin(RelatedObjectLinkMixin, admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
@@ -50,6 +127,7 @@ class MovesAdmin(MilmoveModelAdmin):
     ordering = ["-created_at"]
     date_hierarchy = "created_at"
     list_filter = ("selected_move_type", "status")
+    link_fields = ((LinkField("orders", "orders__orders_number")),)
     list_display = (
         "locator",
         "orders_link",
@@ -75,23 +153,17 @@ class MovesAdmin(MilmoveModelAdmin):
         ("Timestamps", {"fields": ("created_at", "updated_at",)}),
     )
 
-    def orders_link(self, obj):
-        return mark_safe(
-            '<a href="{}">{}</a>'.format(
-                reverse("admin:milmove_app_orders_change", args=(obj.orders.pk,)),
-                obj.orders,
-            )
-        )
-
-    orders_link.short_description = "orders"
-    orders_link.admin_order_field = "orders__orders_number"
-
 
 @admin.register(Orders)
 class OrdersAdmin(MilmoveModelAdmin):
     ordering = ["-created_at"]
     date_hierarchy = "created_at"
     list_filter = ("status",)
+    link_fields = (
+        (LinkField("service_member", "service_member__last_name")),
+        (LinkField("new_duty_station", "new_duty_station__name")),
+        "uploaded_orders",
+    )
     list_display = (
         "orders_number",
         "service_member_link",
@@ -124,46 +196,6 @@ class OrdersAdmin(MilmoveModelAdmin):
         ),
         ("Timestamps", {"fields": ("created_at", "updated_at",)}),
     )
-
-    def service_member_link(self, obj):
-        return mark_safe(
-            '<a href="{}">{}</a>'.format(
-                reverse(
-                    "admin:milmove_app_servicemembers_change",
-                    args=(obj.service_member.pk,),
-                ),
-                obj.service_member,
-            )
-        )
-
-    service_member_link.short_description = "service member"
-    service_member_link.admin_order_field = "service_member__last_name"
-
-    def new_duty_station_link(self, obj):
-        return mark_safe(
-            '<a href="{}">{}</a>'.format(
-                reverse(
-                    "admin:milmove_app_dutystations_change",
-                    args=(obj.new_duty_station.pk,),
-                ),
-                obj.new_duty_station,
-            )
-        )
-
-    new_duty_station_link.short_description = "new duty station"
-    new_duty_station_link.admin_order_field = "new_duty_station__name"
-
-    def uploaded_orders_link(self, obj):
-        return mark_safe(
-            '<a href="{}">{}</a>'.format(
-                reverse(
-                    "admin:milmove_app_documents_change", args=(obj.uploaded_orders.pk,)
-                ),
-                obj.uploaded_orders,
-            )
-        )
-
-    uploaded_orders_link.short_description = "uploaded orders"
 
 
 # Keep this at the bottom of the file after all other ModelAdmins have been registered
