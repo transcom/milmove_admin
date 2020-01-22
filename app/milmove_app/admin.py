@@ -59,7 +59,7 @@ class RelatedObjectLinkMixin(object):
     Example:
         link_fields = (
             "uploaded_orders",
-            (LinkField("service_member", "service_member__last_name")),
+            LinkField("service_member", "service_member__last_name"),
         )
         list_display = [..., 'service_member_link', ...]
         fields = [..., 'uploaded_orders_link', ...]
@@ -127,7 +127,7 @@ class MovesAdmin(MilmoveModelAdmin):
     ordering = ["-created_at"]
     date_hierarchy = "created_at"
     list_filter = ("selected_move_type", "status")
-    link_fields = ((LinkField("orders", "orders__orders_number")),)
+    link_fields = (LinkField("orders", "orders__orders_number"),)
     list_display = (
         "locator",
         "orders_link",
@@ -160,8 +160,8 @@ class OrdersAdmin(MilmoveModelAdmin):
     date_hierarchy = "created_at"
     list_filter = ("status",)
     link_fields = (
-        (LinkField("service_member", "service_member__last_name")),
-        (LinkField("new_duty_station", "new_duty_station__name")),
+        LinkField("service_member", "service_member__last_name"),
+        LinkField("new_duty_station", "new_duty_station__name"),
         "uploaded_orders",
     )
     list_display = (
