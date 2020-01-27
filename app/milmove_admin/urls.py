@@ -15,6 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include, re_path
+from djangooidc import views
 
-urlpatterns = [path("admin/", admin.site.urls)]
+urlpatterns = [
+    # Our callback does not match what djangooidc is expecting, so adding ours first here.
+    re_path(r"auth/login-gov/callback/?$", views.authz_cb, name="openid_login_cb"),
+    path("auth/login-gov/", include("djangooidc.urls")),
+    path("admin/", admin.site.urls),
+]

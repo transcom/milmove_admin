@@ -18,6 +18,12 @@ After installation ensure you run `direnv allow` to pick up environment variable
 direnv allow
 ```
 
+We then need to prepare the signing keys in a the JWK set format used by our OIDC library:
+
+```sh
+make prepare_key
+```
+
 ## Usage
 
 Before getting started go to the MilMove App and migrate the DB:
@@ -26,16 +32,23 @@ Before getting started go to the MilMove App and migrate the DB:
 make db_dev_reset db_dev_migrate
 ```
 
+or if you want some fake pre-populated data:
+
+```sh
+make db_dev_e2e_populate
+```
+
 Next you need to install the tables needed by Django:
 
 ```sh
 make migrate
 ```
 
-Next you need a superuser to log in:
+Next you need a admin user to log in with. Be sure to use the login.gov e-mail address
+that you want to login with:
 
 ```sh
-make createsuperuser
+create-engadmin-user --username <username> --email <email>
 ```
 
 Then you will want to generate the latest version of the models:
@@ -50,7 +63,7 @@ Then you can run the server:
 make runserver
 ```
 
-Finally, open the app at `http://localhost:8001/admin` and log in with the superuser you created.
+Finally, open the app at `http://engadminlocal:3000/admin` and log in with the user you created.
 
 ## Docker Usage
 

@@ -1,0 +1,7 @@
+#! /usr/bin/env bash
+
+set -u -o pipefail
+
+# shellcheck disable=SC1091
+. .venv/bin/activate
+python app/manage.py createsuperuser --noinput "$@"

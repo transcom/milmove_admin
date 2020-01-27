@@ -660,6 +660,7 @@ class MtoShipments(models.Model):
     prime_actual_weight = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
+    shipment_type = models.TextField()  # This field type is a guess.
 
     class Meta:
         managed = False
@@ -1786,6 +1787,7 @@ class UsersRoles(models.Model):
     id = models.UUIDField(primary_key=True)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
+    deleted_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
