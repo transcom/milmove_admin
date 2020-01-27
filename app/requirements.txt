@@ -1,4 +1,4 @@
-Django<3.0
+Django>=3.0,<3.1
 git+https://github.com/koriaf/django-oidc.git
 gunicorn>=20.0
 psycopg2-binary>=2.8.4,<3.0
