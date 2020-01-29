@@ -44,8 +44,17 @@ Next you need to install the tables needed by Django:
 make migrate
 ```
 
-Next you need a admin user to log in with. Be sure to use the login.gov e-mail address
-that you want to login with:
+Next you need an admin superuser. Be sure to use the login.gov e-mail address
+that you want to login with. The following command will create an admin superuser using the
+`DJANGO_SUPERUSER_USERNAME` and `DJANGO_SUPERUSER_EMAIL` environment variables set up in
+your `.envrc.local`:
+
+```sh
+create-engadmin-user
+```
+
+If you would like to create an additional superuser, you can specify the username and e-mail
+as arguments:
 
 ```sh
 create-engadmin-user --username <username> --email <email>
