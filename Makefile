@@ -75,7 +75,7 @@ generate_models: venv  ## Generate new app models.py file
 	@echo "Ignore errors from pre-commit, they are expected"
 
 .PHONY: prepare_key
-prepare_key: venv
+prepare_key: venv  ## Creates a key in JWK format for use by django-oidc library
 	$(WITH_VENV) python ./scripts/convert_key_to_jwk_set.py
 
 .PHONY: runserver
