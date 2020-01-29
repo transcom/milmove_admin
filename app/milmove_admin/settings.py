@@ -165,7 +165,7 @@ OIDC_PROVIDERS = {
         "client_registration": {
             "client_id": os.environ["LOGIN_GOV_ENGADMIN_CLIENT_ID"],
             "redirect_uris": [
-                "{}://{}:{}/auth/login-gov/callback".format(
+                "{}://{}:{}/auth/login-gov/callback/login/".format(
                     os.environ["LOGIN_GOV_CALLBACK_PROTOCOL"],
                     os.environ["LOCAL_HOST_NAME"],
                     os.environ["LOGIN_GOV_CALLBACK_PORT"],
