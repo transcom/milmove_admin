@@ -513,6 +513,10 @@ class MoveOrders(models.Model):
     confirmation_number = models.TextField(blank=True, null=True)
     order_number = models.TextField(blank=True, null=True)
     grade = models.TextField(blank=True, null=True)
+    order_type = models.TextField(blank=True, null=True)  # This field type is a guess.
+    order_type_detail = models.TextField(blank=True, null=True)
+    date_issued = models.DateField(blank=True, null=True)
+    report_by_date = models.DateField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -661,6 +665,7 @@ class MtoShipments(models.Model):
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
     shipment_type = models.TextField()  # This field type is a guess.
+    status = models.TextField(blank=True, null=True)  # This field type is a guess.
 
     class Meta:
         managed = False
