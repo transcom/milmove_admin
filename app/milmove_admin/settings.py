@@ -53,6 +53,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "milmove_app.middleware.OIDCExceptionMiddleware",
 ]
 
 ROOT_URLCONF = "milmove_admin.urls"
