@@ -177,6 +177,13 @@ OIDC_PROVIDERS = {
             "keyset_jwk_file": "file://"
             + os.path.join(BASE_DIR, "keys", os.environ["LOGIN_GOV_JWK_SET_FILENAME"]),
             "acr_value": "http://idmanagement.gov/ns/assurance/loa/1",
+            "post_logout_redirect_uris": [
+                "{}://{}:{}/auth/login-gov/callback/logout/".format(
+                    os.environ["LOGIN_GOV_CALLBACK_PROTOCOL"],
+                    os.environ["LOCAL_HOST_NAME"],
+                    os.environ["LOGIN_GOV_CALLBACK_PORT"],
+                )
+            ],
         },
     }
 }
