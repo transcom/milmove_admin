@@ -863,6 +863,8 @@ class PaymentServiceItems(models.Model):
         MtoServiceItems,
         models.DO_NOTHING,
         related_name="payment_service_items_service_item",
+        blank=True,
+        null=True,
     )
     status = models.TextField()  # This field type is a guess.
     price_cents = models.IntegerField()
@@ -874,6 +876,7 @@ class PaymentServiceItems(models.Model):
     paid_at = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
+    mto_service_item_id = models.UUIDField(blank=True, null=True)
 
     class Meta:
         managed = False
