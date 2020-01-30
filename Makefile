@@ -48,6 +48,7 @@ clean: ## Clean all generated files
 	find ./ -type d -name '__pycache__' -delete
 	find ./ -type f -name '*.pyc' -delete
 	rm -rf ./app/staticfiles/
+	rm -rf ./app/keys/
 
 .PHONY: teardown
 teardown: ## Remove all virtualenv files
