@@ -17,6 +17,7 @@ services:
     volumes:
       - static_volume:/home/app/web/staticfiles
     environment:
+      - LOCAL_HOST_NAME
       - DJANGO_ALLOWED_HOSTS
       - DJANGO_DEBUG
       - DJANGO_SECRET_KEY
@@ -27,6 +28,13 @@ services:
       - DB_HOST=db
       - DB_PORT
       - DB_NAME
+      - LOGIN_GOV_CALLBACK_PROTOCOL
+      - LOGIN_GOV_CALLBACK_PORT
+      - LOGIN_GOV_ENGADMIN_CLIENT_ID
+      - LOGIN_GOV_HOSTNAME
+      - LOGIN_GOV_KID_JWK
+      - LOGIN_GOV_JWK_SET_FILENAME
+      - LOGIN_GOV_SECRET_KEY
     external_links:
       - milmove-db-dev:db
 
@@ -37,7 +45,7 @@ services:
     stdin_open: false
     tty: true
     ports:
-      - "8001:80"
+      - "3000:80"
     volumes:
       - static_volume:/home/app/web/staticfiles
     depends_on:

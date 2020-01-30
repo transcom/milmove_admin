@@ -3,12 +3,13 @@ version: "3.3"
 services:
   web:
     build: ./app
-    command: runserver 0.0.0.0:8001
+    command: runserver 0.0.0.0:3000
     ports:
-      - 8001:8001
+      - 3000:3000
     volumes:
       - ./app/:/usr/src/app/
     environment:
+      - LOCAL_HOST_NAME
       - DJANGO_ALLOWED_HOSTS
       - DJANGO_DEBUG
       - DJANGO_SECRET_KEY
@@ -19,6 +20,13 @@ services:
       - DB_HOST=db
       - DB_PORT
       - DB_NAME
+      - LOGIN_GOV_CALLBACK_PROTOCOL
+      - LOGIN_GOV_CALLBACK_PORT
+      - LOGIN_GOV_ENGADMIN_CLIENT_ID
+      - LOGIN_GOV_HOSTNAME
+      - LOGIN_GOV_KID_JWK
+      - LOGIN_GOV_JWK_SET_FILENAME
+      - LOGIN_GOV_SECRET_KEY
     external_links:
       - milmove-db-dev:db
 
