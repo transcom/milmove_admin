@@ -18,3 +18,6 @@ staticfiles/
 
 # Direnv
 .envrc.local
+
+# Keys
+keys/

@@ -1,0 +1,10 @@
+{% extends "admin/login.html" %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        <p>Welcome, {{ user.get_username }}. Thanks for signing in.</p>
+    {% else %}
+        <p>Welcome, new user. Please sign in.</p>
+        <a href="{% url 'openid_with_op_name' op_name='login-gov' %}?next={{next}}">Sign In</a>
+    {% endif %}
+{% endblock %}

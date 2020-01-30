@@ -48,6 +48,7 @@ clean: ## Clean all generated files
 	find ./ -type d -name '__pycache__' -delete
 	find ./ -type f -name '*.pyc' -delete
 	rm -rf ./app/staticfiles/
+	rm -rf ./app/keys/
 
 .PHONY: teardown
 teardown: ## Remove all virtualenv files
@@ -66,10 +67,6 @@ migrate: venv  ## Migrate the database
 	psql postgres://postgres:"${DB_PASSWORD}"@${DB_HOST}:"${DB_PORT}"/"${DB_NAME}" -c "CREATE SCHEMA IF NOT EXISTS django"
 	$(WITH_VENV) python app/manage.py migrate
 
-.PHONY: createsuperuser
-createsuperuser: venv  ## Create a superuser
-	$(WITH_VENV) python app/manage.py createsuperuser
-
 .PHONY: generate_models
 generate_models: venv  ## Generate new app models.py file
 	$(WITH_VENV) python app/manage.py inspectdb --database milmove > new_models.py
@@ -78,9 +75,13 @@ generate_models: venv  ## Generate new app models.py file
 	pre-commit run --all-files fix-encoding-pragma || true
 	@echo "Ignore errors from pre-commit, they are expected"
 
+.PHONY: prepare_key
+prepare_key: venv  ## Creates a key in JWK format for use by django-oidc library
+	$(WITH_VENV) python ./scripts/convert_key_to_jwk_set.py
+
 .PHONY: runserver
 runserver: venv  ## Run django server with built-in server
-	$(WITH_VENV) python app/manage.py runserver 0.0.0.0:8001
+	$(WITH_VENV) python app/manage.py runserver 0.0.0.0:3000
 
 .PHONY: runserver_docker
 runserver_docker:  ## Run django server from Docker with built-in server

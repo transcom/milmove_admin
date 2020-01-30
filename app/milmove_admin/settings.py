@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "djangooidc",
     "milmove_app",
 ]
 
@@ -52,6 +53,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "milmove_app.middleware.OIDCExceptionMiddleware",
 ]
 
 ROOT_URLCONF = "milmove_admin.urls"
@@ -59,7 +61,7 @@ ROOT_URLCONF = "milmove_admin.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -101,6 +103,9 @@ DATABASES = {
 
 DATABASE_ROUTERS = ["milmove_app.dbrouters.MilmoveRouter"]
 
+AUTHENTICATION_BACKENDS = [
+    "djangooidc.backends.OpenIdConnectBackend",
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -134,3 +139,51 @@ USE_TZ = True
 
 STATIC_URL = "/staticfiles/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+
+# django-oidc settings
+
+# Set LOGIN_URL (for django oidc)
+LOGIN_URL = "/auth/login-gov/openid/login-gov"
+
+# We're disabling dynamic client registration.
+OIDC_ALLOW_DYNAMIC_OP = False
+
+# Don't automatically create OIDC-authenticated users so we can control who has what access.
+OIDC_CREATE_UNKNOWN_USER = False
+
+# Default OIDC behavior will be the 'code' workflow
+OIDC_DEFAULT_BEHAVIOUR = {
+    "response_type": "code",
+    "scope": ["openid", "email"],
+}
+
+# Set up our providers. Here the name is 'login-gov' which we use in the login URL above
+OIDC_PROVIDERS = {
+    "login-gov": {
+        "srv_discovery_url": "https://{}/".format(os.environ["LOGIN_GOV_HOSTNAME"]),
+        "behaviour": OIDC_DEFAULT_BEHAVIOUR,
+        "client_registration": {
+            "client_id": os.environ["LOGIN_GOV_ENGADMIN_CLIENT_ID"],
+            "redirect_uris": [
+                "{}://{}:{}/auth/login-gov/callback/login/".format(
+                    os.environ["LOGIN_GOV_CALLBACK_PROTOCOL"],
+                    os.environ["LOCAL_HOST_NAME"],
+                    os.environ["LOGIN_GOV_CALLBACK_PORT"],
+                )
+            ],
+            "token_endpoint_auth_method": ["private_key_jwt"],
+            "enc_kid": os.environ["LOGIN_GOV_KID_JWK"],
+            "keyset_jwk_file": "file://"
+            + os.path.join(BASE_DIR, "keys", os.environ["LOGIN_GOV_JWK_SET_FILENAME"]),
+            "acr_value": "http://idmanagement.gov/ns/assurance/loa/1",
+            "post_logout_redirect_uris": [
+                "{}://{}:{}/auth/login-gov/callback/logout/".format(
+                    os.environ["LOGIN_GOV_CALLBACK_PROTOCOL"],
+                    os.environ["LOCAL_HOST_NAME"],
+                    os.environ["LOGIN_GOV_CALLBACK_PORT"],
+                )
+            ],
+        },
+    }
+}

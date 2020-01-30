@@ -513,6 +513,10 @@ class MoveOrders(models.Model):
     confirmation_number = models.TextField(blank=True, null=True)
     order_number = models.TextField(blank=True, null=True)
     grade = models.TextField(blank=True, null=True)
+    order_type = models.TextField(blank=True, null=True)  # This field type is a guess.
+    order_type_detail = models.TextField(blank=True, null=True)
+    date_issued = models.DateField(blank=True, null=True)
+    report_by_date = models.DateField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -660,6 +664,8 @@ class MtoShipments(models.Model):
     prime_actual_weight = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
+    shipment_type = models.TextField()  # This field type is a guess.
+    status = models.TextField(blank=True, null=True)  # This field type is a guess.
 
     class Meta:
         managed = False
@@ -857,6 +863,8 @@ class PaymentServiceItems(models.Model):
         MtoServiceItems,
         models.DO_NOTHING,
         related_name="payment_service_items_service_item",
+        blank=True,
+        null=True,
     )
     status = models.TextField()  # This field type is a guess.
     price_cents = models.IntegerField()
@@ -868,6 +876,7 @@ class PaymentServiceItems(models.Model):
     paid_at = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
+    mto_service_item_id = models.UUIDField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -1786,6 +1795,7 @@ class UsersRoles(models.Model):
     id = models.UUIDField(primary_key=True)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
+    deleted_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False

@@ -9,6 +9,10 @@ from django.utils.html import format_html
 
 from .models import *  # noqa
 
+admin.site.site_title = "Milmove Data Viewer"
+admin.site.site_header = "Milmove Engineering Admin"
+admin.site.login_template = "milmove_app/login.html"
+
 # Special-case verbose names
 Addresses._meta.verbose_name = "address"
 Addresses._meta.verbose_name_plural = "addresses"
