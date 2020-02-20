@@ -1,5 +1,13 @@
 # Auto Generated MilMove Admin App
 
+## License Information
+
+Works created by U.S. Federal employees as part of their jobs typically are not eligible for copyright in the United
+States. In places where the contributions of U.S. Federal employees are not eligible for copyright, this work is in
+the public domain. In places where it is eligible for copyright, such as some foreign jurisdictions, the remainder of
+this work is licensed under [the MIT License](https://opensource.org/licenses/MIT), the full text of which is included
+in the [LICENSE.txt](./LICENSE.txt) file in this repository.
+
 **NOTE:** THIS IS A DEMO ONLY AND HAS NOT YET BEEN CONFIRMED AS WORK WE WILL USE IN PRODUCTION
 
 This app automatically generates an Admin from the Database for the MilMove App.
