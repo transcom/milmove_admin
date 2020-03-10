@@ -68,12 +68,15 @@ migrate: venv  ## Migrate the database
 	$(WITH_VENV) python app/manage.py migrate
 
 .PHONY: generate_models
-generate_models: venv  ## Generate new app models.py file
-	$(WITH_VENV) python app/manage.py inspectdb --database milmove > new_models.py
-	mv new_models.py app/milmove_app/models.py
+generate_models: generate_models_only
 	pre-commit run --all-files black || true
 	pre-commit run --all-files fix-encoding-pragma || true
 	@echo "Ignore errors from pre-commit, they are expected"
+
+.PHONY: generate_models_only
+generate_models_only: venv  ## Generate new app models.py file
+	$(WITH_VENV) python app/manage.py inspectdb --database milmove > new_models.py
+	mv new_models.py app/milmove_app/models.py
 
 .PHONY: prepare_key
 prepare_key: venv  ## Creates a key in JWK format for use by django-oidc library
