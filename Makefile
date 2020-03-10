@@ -74,7 +74,7 @@ generate_models: generate_models_only
 	@echo "Ignore errors from pre-commit, they are expected"
 
 .PHONY: generate_models_only
-generate_models_only: venv  ## Generate new app models.py file
+generate_models_standalone: venv  ## Generate new app models.py file
 	$(WITH_VENV) python app/manage.py inspectdb --database milmove > new_models.py
 	mv new_models.py app/milmove_app/models.py
 
