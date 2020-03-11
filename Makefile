@@ -75,6 +75,11 @@ generate_models: venv  ## Generate new app models.py file
 	pre-commit run --all-files fix-encoding-pragma || true
 	@echo "Ignore errors from pre-commit, they are expected"
 
+.PHONY: generate_models_standalone
+generate_models_standalone: ## Generate new app models.py file without virtualenv or pre-commit
+	python app/manage.py inspectdb --database milmove > new_models.py
+	mv new_models.py app/milmove_app/models.py
+
 .PHONY: prepare_key
 prepare_key: venv  ## Creates a key in JWK format for use by django-oidc library
 	$(WITH_VENV) python ./scripts/convert_key_to_jwk_set.py
