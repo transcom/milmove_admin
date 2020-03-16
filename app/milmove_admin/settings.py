@@ -26,9 +26,21 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DJANGO_DEBUG", default=0))
 
+DEV = "development"
+PROD = "production"
+
+# SECURITY WARNING: don't run with env set to development in production
+ENV = os.environ.get("ENV", default=PROD)
+
 # 'DJANGO_ALLOWED_HOSTS' should be a single string of hosts with a space between each.
-# For example: 'DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]'
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+# When DEBUG is True and ALLOWED_HOSTS is empty, the host is validated against ['localhost', '127.0.0.1', '[::1]']
+# https://docs.djangoproject.com/en/3.0/ref/settings/#allowed-hosts
+if ENV == DEV:
+    ALLOWED_HOSTS = os.environ.get(
+        "DJANGO_ALLOWED_HOSTS", "localhost 127.0.0.1 [::1]"
+    ).split()
+else:
+    ALLOWED_HOSTS = ["*.move.mil"]
 
 
 # Application definition

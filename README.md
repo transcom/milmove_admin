@@ -20,6 +20,12 @@ You will need to install prereqs. Run the following script and follow any instru
 ./scripts/prereqs
 ```
 
+Next set ```ENV``` to `development` by adding the following line to your .envrc.local file
+
+``` text
+export ENV="development"
+```
+
 After installation ensure you run `direnv allow` to pick up environment variables for this project.
 
 ```sh
