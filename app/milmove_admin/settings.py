@@ -82,6 +82,7 @@ WSGI_APPLICATION = "milmove_admin.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+# iam auth: https://github.com/labd/django-iam-dbauth
 
 DATABASES = {
     "default": {
@@ -94,11 +95,14 @@ DATABASES = {
         "PORT": os.environ.get("DB_PORT", "5432"),
     },
     "milmove": {
-        "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.postgresql"),
+        "ENGINE": os.environ.get("DB_ENGINE", "django_iam_dbauth.aws.postgresql"),
         "NAME": os.environ.get("DB_NAME", os.path.join(BASE_DIR, "dev_db")),
-        "OPTIONS": {"options": "-c default_transaction_read_only=on"},
+        "OPTIONS": {
+            "options": "-c default_transaction_read_only=on",
+            "user_iam_auth": True,
+            "sslmode": "require",
+        },
         "USER": os.environ.get("DB_USER", "postgres"),
-        "PASSWORD": os.environ.get("DB_PASSWORD", "password"),
         "HOST": os.environ.get("DB_HOST", "localhost"),
         "PORT": os.environ.get("DB_PORT", "5432"),
     },
