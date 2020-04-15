@@ -77,7 +77,6 @@ generate_models: venv  ## Generate new app models.py file
 
 .PHONY: generate_models_standalone
 generate_models_standalone: ## Generate new app models.py file without virtualenv or pre-commit
-	pip install -r app/requirements.txt
 	python app/manage.py inspectdb --database milmove > new_models.py
 	mv new_models.py app/milmove_app/models.py
 
