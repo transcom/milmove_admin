@@ -93,12 +93,11 @@ if DB_IAM_AUTH:
             "ENGINE": os.environ.get("DB_ENGINE", "django_iam_dbauth.aws.postgresql"),
             "NAME": os.environ.get("DB_NAME", os.path.join(BASE_DIR, "dev_db")),
             "OPTIONS": {
-                "options": "-c default_transaction_read_only=on",
+                "options": "-c search_path=django",
                 "user_iam_auth": True,
                 "sslmode": "require",
             },
             "USER": os.environ.get("DB_USER", "ecs_user"),
-            "PASSWORD": os.environ.get("DB_PASSWORD", "password"),
             "HOST": os.environ.get("DB_HOST", "localhost"),
             "PORT": os.environ.get("DB_PORT", "5432"),
         },
@@ -129,7 +128,7 @@ else:
         "milmove": {
             "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.postgresql"),
             "NAME": os.environ.get("DB_NAME", os.path.join(BASE_DIR, "dev_db")),
-            "OPTIONS": {"options": "-c search_path=django"},
+            "OPTIONS": {"options": "-c default_transaction_read_only=on"},
             "USER": os.environ.get("DB_USER", "postgres"),
             "PASSWORD": os.environ.get("DB_PASSWORD", "password"),
             "HOST": os.environ.get("DB_HOST", "localhost"),
