@@ -85,6 +85,10 @@ generate_models_standalone: ## Generate new app models.py file without virtualen
 prepare_key: venv  ## Creates a key in JWK format for use by django-oidc library
 	$(WITH_VENV) python ./scripts/convert_key_to_jwk_set.py
 
+.PHONY: prepare_key_standalone
+prepare_key_standalone:
+	python ./scripts/convert_key_to_jwk_set.py #todo: remove LOGIN_GOV_SECRET_KEY & LOGIN_GOV_KID_JWK from circle ci env variables once we land a better way to handle LOGIN_GOV_JWK_SET_FILENAME
+
 .PHONY: runserver
 runserver: venv  ## Run django server with built-in server
 	$(WITH_VENV) python app/manage.py runserver 0.0.0.0:3000
