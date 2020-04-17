@@ -33,8 +33,8 @@ ALLOWED_HOSTS = os.environ.get(
     "DJANGO_ALLOWED_HOSTS", "localhost 127.0.0.1 [::1]"
 ).split()
 
-# DB_IAM_AUTH should be a bool value that enables IAM based auth for connecting to the db
-DB_IAM_AUTH = os.environ.get("DB_IAM_AUTH", False)
+# DB_IAM should be a bool value that enables IAM based auth for connecting to the db
+DB_IAM = os.environ.get("DB_IAM", False)
 
 
 # Application definition
@@ -87,7 +87,7 @@ WSGI_APPLICATION = "milmove_admin.wsgi.application"
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 # iam auth: https://github.com/labd/django-iam-dbauth
 
-if DB_IAM_AUTH:
+if DB_IAM:
     DATABASES = {
         "default": {
             "ENGINE": os.environ.get("DB_ENGINE", "django_iam_dbauth.aws.postgresql"),
