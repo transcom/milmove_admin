@@ -34,7 +34,7 @@ ALLOWED_HOSTS = os.environ.get(
 ).split()
 
 # DB_IAM should be a bool value that enables IAM based auth for connecting to the db
-DB_IAM = os.environ.get("DB_IAM", False)
+DB_IAM = os.environ.get("db_iam", False)
 
 
 # Application definition
@@ -94,7 +94,7 @@ if DB_IAM:
             "NAME": os.environ.get("DB_NAME", os.path.join(BASE_DIR, "dev_db")),
             "OPTIONS": {
                 "options": "-c search_path=django",
-                "user_iam_auth": True,
+                "use_iam_auth": True,
                 "sslmode": "require",
             },
             "USER": os.environ.get("DB_USER", "ecs_user"),
@@ -106,7 +106,7 @@ if DB_IAM:
             "NAME": os.environ.get("DB_NAME", os.path.join(BASE_DIR, "dev_db")),
             "OPTIONS": {
                 "options": "-c default_transaction_read_only=on",
-                "user_iam_auth": True,
+                "use_iam_auth": True,
                 "sslmode": "require",
             },
             "USER": os.environ.get("DB_USER", "ecs_user"),
