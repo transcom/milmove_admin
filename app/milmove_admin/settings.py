@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import json
 from authlib.jose import jwk
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -229,7 +230,8 @@ if ENV == "development":
         }
     }
 else:
-    key_dict = jwk.dumps(os.environ["LOGIN_GOV_JWK_SET"], kty="RSA")
+    JWK_SET = json.loads(os.environ["LOGIN_GOV_JWK_SET"])
+    key_dict = jwk.dumps(JWK_SET, kty="RSA")
     # Set up our providers. Here the name is 'login-gov' which we use in the login URL above
     OIDC_PROVIDERS = {
         "login-gov": {
