@@ -37,7 +37,7 @@ ALLOWED_HOSTS = os.environ.get(
 # DB_IAM should be a bool value that enables IAM based auth for connecting to the db
 DB_IAM = os.environ.get("db_iam", False)
 
-ENV = os.environ.get("ENV")
+ENV = os.environ.get("ENVIRONMENT")
 
 
 # Application definition
@@ -196,35 +196,65 @@ OIDC_DEFAULT_BEHAVIOUR = {
     "scope": ["openid", "email"],
 }
 
-key_dict = jwk.dumps(os.environ["LOGIN_GOV_SECRET_KEY"], kty="RSA")
-key_dict["use"] = "sig"
-key_dict["alg"] = "RS256"
-key_dict["kid"] = os.environ["LOGIN_GOV_KID_JWK"]
-# Set up our providers. Here the name is 'login-gov' which we use in the login URL above
-OIDC_PROVIDERS = {
-    "login-gov": {
-        "srv_discovery_url": "https://{}/".format(os.environ["LOGIN_GOV_HOSTNAME"]),
-        "behaviour": OIDC_DEFAULT_BEHAVIOUR,
-        "client_registration": {
-            "client_id": os.environ["LOGIN_GOV_ENGADMIN_CLIENT_ID"],
-            "redirect_uris": [
-                "{}://{}:{}/auth/login-gov/callback/login/".format(
-                    os.environ["LOGIN_GOV_CALLBACK_PROTOCOL"],
-                    os.environ["LOCAL_HOST_NAME"],
-                    os.environ["LOGIN_GOV_CALLBACK_PORT"],
-                )
-            ],
-            "token_endpoint_auth_method": ["private_key_jwt"],
-            "enc_kid": os.environ["LOGIN_GOV_KID_JWK"],
-            "keyset_jwt_dict": key_dict,
-            "acr_value": "http://idmanagement.gov/ns/assurance/loa/1",
-            "post_logout_redirect_uris": [
-                "{}://{}:{}/auth/login-gov/callback/logout/".format(
-                    os.environ["LOGIN_GOV_CALLBACK_PROTOCOL"],
-                    os.environ["LOCAL_HOST_NAME"],
-                    os.environ["LOGIN_GOV_CALLBACK_PORT"],
-                )
-            ],
-        },
+# for development env rely on locally generated secret vars
+if ENV == "development":
+    OIDC_PROVIDERS = {
+        "login-gov": {
+            "srv_discovery_url": "https://{}/".format(os.environ["LOGIN_GOV_HOSTNAME"]),
+            "behaviour": OIDC_DEFAULT_BEHAVIOUR,
+            "client_registration": {
+                "client_id": os.environ["LOGIN_GOV_ENGADMIN_CLIENT_ID"],
+                "redirect_uris": [
+                    "{}://{}:{}/auth/login-gov/callback/login/".format(
+                        os.environ["LOGIN_GOV_CALLBACK_PROTOCOL"],
+                        os.environ["LOCAL_HOST_NAME"],
+                        os.environ["LOGIN_GOV_CALLBACK_PORT"],
+                    )
+                ],
+                "token_endpoint_auth_method": ["private_key_jwt"],
+                "enc_kid": os.environ["LOGIN_GOV_KID_JWK"],
+                "keyset_jwk_file": "file://"
+                + os.path.join(
+                    BASE_DIR, "keys", os.environ["LOGIN_GOV_JWK_SET_FILENAME"]
+                ),
+                "acr_value": "http://idmanagement.gov/ns/assurance/loa/1",
+                "post_logout_redirect_uris": [
+                    "{}://{}:{}/auth/login-gov/callback/logout/".format(
+                        os.environ["LOGIN_GOV_CALLBACK_PROTOCOL"],
+                        os.environ["LOCAL_HOST_NAME"],
+                        os.environ["LOGIN_GOV_CALLBACK_PORT"],
+                    )
+                ],
+            },
+        }
     }
-}
+else:
+    key_dict = jwk.dumps(os.environ["LOGIN_GOV_JWK_SET"], kty="RSA")
+    # Set up our providers. Here the name is 'login-gov' which we use in the login URL above
+    OIDC_PROVIDERS = {
+        "login-gov": {
+            "srv_discovery_url": "https://{}/".format(os.environ["LOGIN_GOV_HOSTNAME"]),
+            "behaviour": OIDC_DEFAULT_BEHAVIOUR,
+            "client_registration": {
+                "client_id": os.environ["LOGIN_GOV_ENGADMIN_CLIENT_ID"],
+                "redirect_uris": [
+                    "{}://{}:{}/auth/login-gov/callback/login/".format(
+                        os.environ["LOGIN_GOV_CALLBACK_PROTOCOL"],
+                        os.environ["LOCAL_HOST_NAME"],
+                        os.environ["LOGIN_GOV_CALLBACK_PORT"],
+                    )
+                ],
+                "token_endpoint_auth_method": ["private_key_jwt"],
+                "enc_kid": os.environ["LOGIN_GOV_KID_JWK"],
+                "keyset_jwt_dict": key_dict,
+                "acr_value": "http://idmanagement.gov/ns/assurance/loa/1",
+                "post_logout_redirect_uris": [
+                    "{}://{}:{}/auth/login-gov/callback/logout/".format(
+                        os.environ["LOGIN_GOV_CALLBACK_PROTOCOL"],
+                        os.environ["LOCAL_HOST_NAME"],
+                        os.environ["LOGIN_GOV_CALLBACK_PORT"],
+                    )
+                ],
+            },
+        }
+    }
