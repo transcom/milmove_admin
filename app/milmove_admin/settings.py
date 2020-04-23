@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import base64
 from authlib.jose import jwk
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -229,7 +230,8 @@ if ENV == "development":
         }
     }
 else:
-    key_dict = jwk.dumps(os.environ["LOGIN_GOV_SECRET_KEY"], kty="RSA")
+    base64_encoded_key = os.environ["LOGIN_GOV_SECRET_KEY"]
+    key_dict = jwk.dumps(base64.b64decode(base64_encoded_key), kty="RSA")
     key_dict["use"] = "sig"
     key_dict["alg"] = "RS256"
     key_dict["kid"] = os.environ["LOGIN_GOV_KID_JWK"]
