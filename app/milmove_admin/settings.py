@@ -229,7 +229,7 @@ if ENV == "development":
         }
     }
 else:
-    key_dict = jwk.dumps(os.environ["LOGIN_GOV_JWK_SET"], kty="RSA")
+    key_dict = jwk.dumps(os.environ["LOGIN_GOV_SECRET_KEY"], kty="RSA")
     key_dict["use"] = "sig"
     key_dict["alg"] = "RS256"
     key_dict["kid"] = os.environ["LOGIN_GOV_KID_JWK"]
