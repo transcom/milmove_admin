@@ -36,7 +36,7 @@ ALLOWED_HOSTS = os.environ.get(
 ).split()
 
 # DB_IAM should be a bool value that enables IAM based auth for connecting to the db
-DB_IAM = os.environ.get("db_iam", False)
+DB_IAM = os.environ.get("DB_IAM", False)
 
 ENV = os.environ.get("ENVIRONMENT")
 
