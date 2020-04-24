@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import base64
+from authlib.jose import jwk
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -32,6 +34,11 @@ DEBUG = int(os.environ.get("DJANGO_DEBUG", default=0))
 ALLOWED_HOSTS = os.environ.get(
     "DJANGO_ALLOWED_HOSTS", "localhost 127.0.0.1 [::1]"
 ).split()
+
+# DB_IAM should be a bool value that enables IAM based auth for connecting to the db
+DB_IAM = os.environ.get("DB_IAM", False)
+
+ENV = os.environ.get("ENVIRONMENT")
 
 
 # Application definition
@@ -82,27 +89,56 @@ WSGI_APPLICATION = "milmove_admin.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+# iam auth: https://github.com/labd/django-iam-dbauth
 
-DATABASES = {
-    "default": {
-        "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.postgresql"),
-        "NAME": os.environ.get("DB_NAME", os.path.join(BASE_DIR, "dev_db")),
-        "OPTIONS": {"options": "-c search_path=django"},
-        "USER": os.environ.get("DB_USER", "postgres"),
-        "PASSWORD": os.environ.get("DB_PASSWORD", "password"),
-        "HOST": os.environ.get("DB_HOST", "localhost"),
-        "PORT": os.environ.get("DB_PORT", "5432"),
-    },
-    "milmove": {
-        "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.postgresql"),
-        "NAME": os.environ.get("DB_NAME", os.path.join(BASE_DIR, "dev_db")),
-        "OPTIONS": {"options": "-c default_transaction_read_only=on"},
-        "USER": os.environ.get("DB_USER", "postgres"),
-        "PASSWORD": os.environ.get("DB_PASSWORD", "password"),
-        "HOST": os.environ.get("DB_HOST", "localhost"),
-        "PORT": os.environ.get("DB_PORT", "5432"),
-    },
-}
+if DB_IAM:
+    DATABASES = {
+        "default": {
+            "ENGINE": os.environ.get("DB_ENGINE", "django_iam_dbauth.aws.postgresql"),
+            "NAME": os.environ.get("DB_NAME", os.path.join(BASE_DIR, "dev_db")),
+            "OPTIONS": {
+                "options": "-c search_path=django",
+                "use_iam_auth": True,
+                "sslmode": "require",
+            },
+            "USER": os.environ.get("DB_USER", "ecs_user"),
+            "HOST": os.environ.get("DB_HOST", "localhost"),
+            "PORT": os.environ.get("DB_PORT", "5432"),
+        },
+        "milmove": {
+            "ENGINE": os.environ.get("DB_ENGINE", "django_iam_dbauth.aws.postgresql"),
+            "NAME": os.environ.get("DB_NAME", os.path.join(BASE_DIR, "dev_db")),
+            "OPTIONS": {
+                "options": "-c default_transaction_read_only=on",
+                "use_iam_auth": True,
+                "sslmode": "require",
+            },
+            "USER": os.environ.get("DB_USER", "ecs_user"),
+            "HOST": os.environ.get("DB_HOST", "localhost"),
+            "PORT": os.environ.get("DB_PORT", "5432"),
+        },
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.postgresql"),
+            "NAME": os.environ.get("DB_NAME", os.path.join(BASE_DIR, "dev_db")),
+            "OPTIONS": {"options": "-c search_path=django"},
+            "USER": os.environ.get("DB_USER", "postgres"),
+            "PASSWORD": os.environ.get("DB_PASSWORD", "password"),
+            "HOST": os.environ.get("DB_HOST", "localhost"),
+            "PORT": os.environ.get("DB_PORT", "5432"),
+        },
+        "milmove": {
+            "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.postgresql"),
+            "NAME": os.environ.get("DB_NAME", os.path.join(BASE_DIR, "dev_db")),
+            "OPTIONS": {"options": "-c default_transaction_read_only=on"},
+            "USER": os.environ.get("DB_USER", "postgres"),
+            "PASSWORD": os.environ.get("DB_PASSWORD", "password"),
+            "HOST": os.environ.get("DB_HOST", "localhost"),
+            "PORT": os.environ.get("DB_PORT", "5432"),
+        },
+    }
 
 DATABASE_ROUTERS = ["milmove_app.dbrouters.MilmoveRouter"]
 
@@ -161,32 +197,69 @@ OIDC_DEFAULT_BEHAVIOUR = {
     "scope": ["openid", "email"],
 }
 
-# Set up our providers. Here the name is 'login-gov' which we use in the login URL above
-OIDC_PROVIDERS = {
-    "login-gov": {
-        "srv_discovery_url": "https://{}/".format(os.environ["LOGIN_GOV_HOSTNAME"]),
-        "behaviour": OIDC_DEFAULT_BEHAVIOUR,
-        "client_registration": {
-            "client_id": os.environ["LOGIN_GOV_ENGADMIN_CLIENT_ID"],
-            "redirect_uris": [
-                "{}://{}:{}/auth/login-gov/callback/login/".format(
-                    os.environ["LOGIN_GOV_CALLBACK_PROTOCOL"],
-                    os.environ["LOCAL_HOST_NAME"],
-                    os.environ["LOGIN_GOV_CALLBACK_PORT"],
-                )
-            ],
-            "token_endpoint_auth_method": ["private_key_jwt"],
-            "enc_kid": os.environ["LOGIN_GOV_KID_JWK"],
-            "keyset_jwk_file": "file://"
-            + os.path.join(BASE_DIR, "keys", os.environ["LOGIN_GOV_JWK_SET_FILENAME"]),
-            "acr_value": "http://idmanagement.gov/ns/assurance/loa/1",
-            "post_logout_redirect_uris": [
-                "{}://{}:{}/auth/login-gov/callback/logout/".format(
-                    os.environ["LOGIN_GOV_CALLBACK_PROTOCOL"],
-                    os.environ["LOCAL_HOST_NAME"],
-                    os.environ["LOGIN_GOV_CALLBACK_PORT"],
-                )
-            ],
-        },
+# for development env rely on locally generated secret vars
+if ENV == "development":
+    OIDC_PROVIDERS = {
+        "login-gov": {
+            "srv_discovery_url": "https://{}/".format(os.environ["LOGIN_GOV_HOSTNAME"]),
+            "behaviour": OIDC_DEFAULT_BEHAVIOUR,
+            "client_registration": {
+                "client_id": os.environ["LOGIN_GOV_ENGADMIN_CLIENT_ID"],
+                "redirect_uris": [
+                    "{}://{}:{}/auth/login-gov/callback/login/".format(
+                        os.environ["LOGIN_GOV_CALLBACK_PROTOCOL"],
+                        os.environ["LOCAL_HOST_NAME"],
+                        os.environ["LOGIN_GOV_CALLBACK_PORT"],
+                    )
+                ],
+                "token_endpoint_auth_method": ["private_key_jwt"],
+                "enc_kid": os.environ["LOGIN_GOV_KID_JWK"],
+                "keyset_jwk_file": "file://"
+                + os.path.join(
+                    BASE_DIR, "keys", os.environ["LOGIN_GOV_JWK_SET_FILENAME"]
+                ),
+                "acr_value": "http://idmanagement.gov/ns/assurance/loa/1",
+                "post_logout_redirect_uris": [
+                    "{}://{}:{}/auth/login-gov/callback/logout/".format(
+                        os.environ["LOGIN_GOV_CALLBACK_PROTOCOL"],
+                        os.environ["LOCAL_HOST_NAME"],
+                        os.environ["LOGIN_GOV_CALLBACK_PORT"],
+                    )
+                ],
+            },
+        }
     }
-}
+else:
+    base64_encoded_key = os.environ["LOGIN_GOV_SECRET_KEY"]
+    key_dict = jwk.dumps(base64.b64decode(base64_encoded_key), kty="RSA")
+    key_dict["use"] = "sig"
+    key_dict["alg"] = "RS256"
+    key_dict["kid"] = os.environ["LOGIN_GOV_KID_JWK"]
+    # Set up our providers. Here the name is 'login-gov' which we use in the login URL above
+    OIDC_PROVIDERS = {
+        "login-gov": {
+            "srv_discovery_url": "https://{}/".format(os.environ["LOGIN_GOV_HOSTNAME"]),
+            "behaviour": OIDC_DEFAULT_BEHAVIOUR,
+            "client_registration": {
+                "client_id": os.environ["LOGIN_GOV_ENGADMIN_CLIENT_ID"],
+                "redirect_uris": [
+                    "{}://{}:{}/auth/login-gov/callback/login/".format(
+                        os.environ["LOGIN_GOV_CALLBACK_PROTOCOL"],
+                        os.environ["LOCAL_HOST_NAME"],
+                        os.environ["LOGIN_GOV_CALLBACK_PORT"],
+                    )
+                ],
+                "token_endpoint_auth_method": ["private_key_jwt"],
+                "enc_kid": os.environ["LOGIN_GOV_KID_JWK"],
+                "keyset_jwt_dict": key_dict,
+                "acr_value": "http://idmanagement.gov/ns/assurance/loa/1",
+                "post_logout_redirect_uris": [
+                    "{}://{}:{}/auth/login-gov/callback/logout/".format(
+                        os.environ["LOGIN_GOV_CALLBACK_PROTOCOL"],
+                        os.environ["LOCAL_HOST_NAME"],
+                        os.environ["LOGIN_GOV_CALLBACK_PORT"],
+                    )
+                ],
+            },
+        }
+    }
