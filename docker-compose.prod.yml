@@ -7,7 +7,7 @@ services:
       context: ./app
       dockerfile: Dockerfile.prod
       cache_from:
-        - python:3.8-alpine
+        - python:3.8-alpine3.11
     command: milmove_admin.wsgi:application --name milmove_admin --bind 0.0.0.0:8000 --workers 3 --log-level info --error-logfile "-" --access-logfile "-"
     image: milmove_admin:latest
     stdin_open: true
